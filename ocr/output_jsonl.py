@@ -22,10 +22,10 @@ class OutputJsonl(Output):
                 os.remove(self.outputPath)  # 删除文件
             open(self.outputPath, 'w').close()  # 创建文件
         except FileNotFoundError:
-            raise Exception(f'创建jsonl文件失败。请检查以下地址是否正确。\n{self.outputPath}')
+            raise Exception(f'Failed to create jsonl file. Please check if the following address is correct.\n{self.outputPath}')
         except Exception as e:
             raise Exception(
-                f'创建jsonl文件失败。文件地址：\n{self.outputPath}\n\n错误信息：\n{e}')
+                f'Failed to create jsonl file. File address:\n{self.outputPath}\n\nerror message：\n{e}')
 
     def print(self, text):
         if self.outputPath:

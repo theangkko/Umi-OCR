@@ -35,7 +35,7 @@ class OutputSeparateTxt(Output):
             with open(path, 'w', encoding='utf-8') as f:  # 写入本地文件
                 f.write(ocrText)
         except FileNotFoundError:
-            raise Exception(f'创建txt文件失败。请检查以下地址是否正确。\n{path}')
+            raise Exception(f'Failed to create txt file. Please check if the following address is correct.\n{path}')
         except Exception as e:
             raise Exception(
-                f'创建txt文件失败。文件地址：\n{path}\n\n错误信息：\n{e}')
+                f'Failed to create txt file. File address:\n{path}\n\nError message:\n{e}')

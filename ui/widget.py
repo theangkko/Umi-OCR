@@ -63,7 +63,7 @@ class Widget:
                     Config.set(isHotkey, False)
                     Config.set(hotkeyName, '')
                     tk.messagebox.showwarning(
-                        '提示', f'无法注册快捷键【{hotkey}】\n\n错误信息：\n{err}')
+                        'Prompt ', f'Unable to register shortcut key [{hotkey}]\n\n error message:\n{err}')
 
         def onRead():  # 当 修改键按下
 
@@ -122,18 +122,18 @@ class Widget:
         wid.grid(column=0, row=0, sticky='w')
 
         if isFix:  # 固定组合，不给修改
-            tk.Label(hFrame, text='修改', fg='gray').grid(
+            tk.Label(hFrame, text='modifications', fg='gray').grid(
                 column=1, row=0, sticky='w')
             tips = tk.Label(hFrame, text=hotkeyCom, justify='center')
             tips.grid(column=2, row=0, sticky="nsew")
         else:  # 允许自定义修改
-            btn = tk.Label(hFrame, text='修改', cursor='hand2', fg='blue')
+            btn = tk.Label(hFrame, text='modifications', cursor='hand2', fg='blue')
             btn.grid(column=1, row=0, sticky='w')
             btn.bind('<Button-1>', lambda *e: onRead())
             tips = tk.Label(hFrame, textvariable=Config.getTK(hotkeyName),
                             justify='center')
             tips.grid(column=2, row=0, sticky="nsew")
-        tips2 = tk.Label(hFrame, text='等待输入…… (按Esc取消)',
+        tips2 = tk.Label(hFrame, text='Wait to enter ...... (press Esc to cancel)',
                          justify='center', fg='deeppink')
         tips2.grid(column=2, row=0, sticky="nsew")
         tips2.grid_remove()  # 隐藏

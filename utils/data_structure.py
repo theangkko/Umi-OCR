@@ -29,7 +29,7 @@ class KeyList:
             del self.__dataList[index]
         else:
             raise Exception(
-                f'List delete : 请传入合法的key或index！当前为 {key} , {index}')
+                f'List delete : Please pass in a legal key or index! Currently the {key} , {index}')
 
     def clear(self):
         '''清空全部元素'''
@@ -64,7 +64,7 @@ class KeyList:
         elif self.isIndex(index):
             return self.__dataDict[self.__dataList[index]]
         else:
-            raise Exception(f'List get : 请传入合法的key或index！当前为 {key} , {index}')
+            raise Exception(f'List get : Please pass in a legal key or index! Currently the {key} , {index}')
 
     def getKeys(self):
         '''返回key列表'''

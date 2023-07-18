@@ -81,7 +81,7 @@ class Hotkey_Api():  # 热键API，封装 keyboard.Listener
                 self.hotkeySet = hotkey  # 键集合
                 self.hotkeyName = self.toStr(hotkey)  # 名称
             else:
-                raise ValueError(f'不合法的热键值：{hotkey}')
+                raise ValueError(f'Illegal hotkey values：{hotkey}')
             self.callback = callback  # 回调
             self.isPress = isPress  # T为按压触发，F为释放触发
 
@@ -261,7 +261,7 @@ class Hotkey_Api():  # 热键API，封装 keyboard.Listener
     def read(self, callback):
         '''录制快捷键。按下并松开一组按键，将按键序列字符串发送到回调函数'''
         if self.isReading:
-            callback('', '当前已在录制')
+            callback('', 'Currently recording')
             return
         self.isReading = True
         self.readData['keyList'] = []

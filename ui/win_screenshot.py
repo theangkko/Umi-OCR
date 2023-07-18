@@ -262,7 +262,7 @@ Or, please switch the screenshot mode to [Windows System Screenshot] in the soft
         self.debugXYBox = self.canvas.create_rectangle(  # 坐标下面的底
             self.OB, self.OB, self.OB, self.OB, fill='yellow', outline='#999', width=1)
         self.debugXYText = self.canvas.create_text(self.OB, self.OB,  # 显示坐标
-                                                   font=('Microsoft YaHei', 15, 'bold'), fill='red', anchor='nw')
+                                                   font=('Malgun Gothic', 15, 'bold'), fill='red', anchor='nw')
         self.debugList = []  # 显示屏幕信息
         # 闪光模块
         self.flashList = []  # 闪光元素

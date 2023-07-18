@@ -1,9 +1,9 @@
 # tbpu : text block processing unit
-# 文块处理器的基类。
-# OCR返回的结果中，一项包含文字、包围盒、置信度的元素，称为一个“文块” - text block 。
-# 文块不一定是完整的一句话或一个段落。反之，一般是零散的文字。
-# 一个OCR结果常由多个文块组成。
-# 文块处理器就是：将传入的多个文块进行处理，比如合并、排序、删除文块。
+# The base class of a text block processor.
+# An element of the result returned by OCR that contains text, enclosing boxes, and confidence levels is called a "text block".
+# A text block is not necessarily a complete sentence or paragraph. Instead, it is usually fragmented text.
+# An OCR result often consists of multiple text blocks.
+# A text block processor is a processor that takes multiple incoming text blocks and processes them, such as merging, sorting, and deleting them.
 
 from utils.logger import GetLog
 Log = GetLog()
@@ -11,11 +11,11 @@ Log = GetLog()
 
 class Tbpu:
     def __init__(self):
-        self.tbpuName = '文块处理单元-未知'
+        self.tbpuName = 'Block processing unit -- unknown'
 
     def getInitInfo(self):
         '''返回初始化信息字符串'''
-        return f'文块后处理：[{self.tbpuName}]'
+        return f'Text block reprocessing：[{self.tbpuName}]'
 
     def run(self, textBlocks, img):
         '''输入：textBlocks文块 , img图片信息\n

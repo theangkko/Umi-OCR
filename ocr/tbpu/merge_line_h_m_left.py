@@ -1,4 +1,4 @@
-# 文块处理：横排-合并多行-左对齐
+# text block processing：Horizontal - Merge Multiple Lines - Left Alignment
 from ocr.tbpu.merge_line_h import TbpuLineH
 
 from time import time
@@ -7,7 +7,7 @@ from time import time
 class TbpuLineHMultiLeft(TbpuLineH):
     def __init__(self):
         super().__init__()
-        self.tbpuName = '横排-合并多行-左对齐'
+        self.tbpuName = 'Horizontal - Merge Multiple Lines - Left Alignment'
         # x、y方向上合并的允许阈值，为该行的行高乘上比例因子
         self.factorX = 1
         self.factorY = 2
@@ -19,7 +19,7 @@ class TbpuLineHMultiLeft(TbpuLineH):
         self.rowHeight = 10  # 当前行高
 
     def getInitInfo(self):
-        return f'文块后处理：[{self.tbpuName}]'
+        return f'Text block reprocessing：[{self.tbpuName}]'
 
     @staticmethod
     def isBoxInX(box1, box2):
@@ -95,4 +95,4 @@ class TbpuLineHMultiLeft(TbpuLineH):
                 tb['score'] /= self.mergeNum  # 平均置信度
             resList.append(tb)  # 装填入结果
         # 返回新文块组和debug字符串
-        return resList, f'[{self.tbpuName}] 原{len(textBlocks)}块，合并后{len(resList)}块，耗时{time()-timeIn}s'
+        return resList, f'[{self.tbpuName}] Original {len(textBlocks)} blocks, merged {len(resList)} blocks, time consuming{time()-timeIn}s'

@@ -1,4 +1,4 @@
-# 文块后处理：[竖排-从左到右-单行]
+# text block processing：[竖排-从左到右-单行]
 from ocr.tbpu.tbpu import Tbpu
 
 from time import time

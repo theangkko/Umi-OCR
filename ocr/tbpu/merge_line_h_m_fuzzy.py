@@ -1,11 +1,11 @@
-# 文块处理：横排-合并多行-模糊匹配
+# text block processing：Landscape - Merge Multiple Lines - Fuzzy Match
 from ocr.tbpu.merge_line_h_m_left import TbpuLineHMultiLeft
 
 
 class TbpuLineHMultiFuzzy(TbpuLineHMultiLeft):
     def __init__(self):
         super().__init__()
-        self.tbpuName = '横排-合并多行-模糊匹配'
+        self.tbpuName = 'Landscape - Merge Multiple Lines - Fuzzy Match'
 
     def isRuleMerge(self, box1, box2):
         '''合并规则：两个box可以合并时返回T'''

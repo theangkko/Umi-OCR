@@ -18,7 +18,7 @@ class OutputPanel(Output):
 
     def debug(self, text):
         '''输出调试信息'''
-        self.print(f'[调试信息] {text}')
+        self.print(f'[Debugging Information] {text}')
 
     def text(self, text):
         '''输出正文'''

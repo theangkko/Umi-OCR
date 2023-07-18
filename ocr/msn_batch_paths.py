@@ -58,7 +58,7 @@ class MsnBatch(Msn):
         if tbpuClass:
             self.procList.append(tbpuClass())
 
-        Log.info(f'批量文本处理器初始化完毕！')
+        Log.info(f'The batch text processor is initialised!')
 
     def __output(self,  type_, *data):  # 输出字符串
         ''' type_ 可选值：
@@ -87,17 +87,17 @@ class MsnBatch(Msn):
         Config.main.win.update()  # 刷新进度
         self.clearTableItem()  # 清空表格参数
         # 输出初始信息
-        startStr = f"\n任务开始时间：{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}\n\n"
+        startStr = f"\nTask start time:{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}\n\n"
         self.__output('text', startStr)
         # 输出各个文块处理器的debug信息
         if self.isDebug:
-            debugStr = f'已启用输出调试信息。\n引擎路径：[{self.ocrToolPath}]\n配置文件路径：[{self.configPath}]\n启动参数：[{self.argsStr}]\n'
+            debugStr = f'Output debugging information is enabled. \n engine path:[{self.ocrToolPath}]\nConfiguration file path:[{self.configPath}]\n启动参数：[{self.argsStr}]\n'
             if self.procList:
                 for proc in self.procList:
                     debugStr += proc.getInitInfo()
                 debugStr += '\n'
             else:
-                debugStr += '未添加文块后处理\n'
+                debugStr += 'No text block post-processing added\n'
             self.__output('debug', debugStr)
         self.setRunning(MsnFlag.running)
 
@@ -125,20 +125,20 @@ class MsnBatch(Msn):
                 if scoreNum > 0:
                     score /= scoreNum
                 textScore = str(score)
-                textDebug += f'总耗时：{numData["timeNow"]}s  置信度：{textScore}\n'
+                textDebug += f'total time consumption：{numData["timeNow"]}s  confidence level ：{textScore}\n'
             else:
                 textScore = '无文字'
-                textDebug += f'总耗时：{numData["timeNow"]}s  全部文字已忽略\n'
+                textDebug += f'total time consumption：{numData["timeNow"]}s  All text ignored\n'
                 flagNoOut = True
         elif ocrData['code'] == 101:  # 无文字
             textScore = '无文字'
-            textDebug += f'总耗时：{numData["timeNow"]}s  图中未发现文字\n'
+            textDebug += f'total time consumption：{numData["timeNow"]}s  图中未发现文字\n'
             flagNoOut = True
-        else:  # 识别失败
+        else:  # Error message recognition failure
             # 将错误信息写入第一个文块
             textBlockList = [{'box': [0, 0, 0, 0, 0, 0, 0, 0], 'score': 0,
-                              'text':f'识别失败，错误码：{ocrData["code"]}\n错误信息：{str(ocrData["data"])}\n'}]
-            textDebug += f'总耗时：{numData["timeNow"]}s  识别失败\n'
+                              'text':f'Error message recognition failure，error code：{ocrData["code"]}\nerror message：{str(ocrData["data"])}\n'}]
+            textDebug += f'total time consumption：{numData["timeNow"]}s  Error message recognition failure\n'
             textScore = '错误'
         # ==================== 输出 ====================
         if self.isIgnoreNoText and flagNoOut:
@@ -158,7 +158,7 @@ class MsnBatch(Msn):
                           score=textScore[:4], index=numData['index'])
 
     def onStop(self, num):
-        stopStr = f"\n任务结束时间：{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}\n\n"
+        stopStr = f"\nEnd of mandate：{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}\n\n"
         self.__output('text', stopStr)
         if Config.get('isOpenExplorer'):  # 打开输出文件夹
             self.outputList[0].openOutputFile()
@@ -167,10 +167,10 @@ class MsnBatch(Msn):
             for i in range(1, l):
                 self.outputList[i].openOutputFile()
         if Config.get('isNotify'):  # 通知弹窗
-            title = f'识别完成，共{num["all"]}张图片'
-            msg = '结果未保存到本地文件，请在软件面板查看'
+            title = f'Recognition complete, total {num["all"]} images'
+            msg = 'The results are not saved to a local file, please view them in the software panel'
             if Config.get('isOutputTxt') or Config.get('isOutputSeparateTxt') or Config.get('isOutputMD') or Config.get('isOutputJsonl'):
-                msg = f'结果保存到：{Config.get("outputFilePath")}'
+                msg = f'The results are saved to the：{Config.get("outputFilePath")}'
             Notify(title, msg)
         if Config.get("isOkMission"):  # 计划任务
             Config.set("isOkMission", False)  # 一次性，设回false

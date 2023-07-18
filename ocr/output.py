@@ -1,4 +1,4 @@
-# 输出器的基类。按指定的格式，将传入的文本输出到指定地方。
+# Base class for outputters. Outputs incoming text to the specified place in the specified format.
 
 from utils.logger import GetLog
 
@@ -9,13 +9,13 @@ Log = GetLog()
 
 class Output:
     def __init__(self):
-        self.outputPath = ''  # 输出路径
+        self.outputPath = ''  # output path
 
     def print(self, text):
-        '''直接输出文字'''
-        Log.info(f'输出: {text}')
+        '''Direct Text Output'''
+        Log.info(f'exports: {text}')
 
     def openOutputFile(self):
-        '''打开输出文件（夹）'''
+        '''Open output file (folder)'''
         if self.outputPath and os.path.exists(self.outputPath):
             os.startfile(self.outputPath)

@@ -7,7 +7,7 @@ import os
 import time
 import asyncio
 import threading
-import win32pipe  # 管道相关
+import win32pipe  # Pipeline Related
 import win32file
 import tkinter as tk
 
@@ -17,18 +17,18 @@ Log = GetLog()
 
 Flags = gflags.FLAGS
 # 设置
-gflags.DEFINE_integer('language', -1, '更改识别语言。传入序号(从0开始)，切换为设置页中对应序号的语言。')
-gflags.DEFINE_integer('window_top_mode', -1, '窗口置顶模式。0为静默模式，1为自动弹出。')
-gflags.DEFINE_string('output_file_path', '', '指定输出文件的目录（文件夹）。')
-gflags.DEFINE_string('output_file_name', '', '指定输出文件的文件名（不含后缀）。')
+gflags.DEFINE_integer('language', -1, 'Changes the recognition language. Pass in the serial number (from 0) to switch to the language corresponding to the serial number in the setting page.')
+gflags.DEFINE_integer('window_top_mode', -1, 'Window topping mode. 0 for silent mode, 1 for automatic popup.')
+gflags.DEFINE_string('output_file_path', '', 'Specifies the directory (folder) of the output file.')
+gflags.DEFINE_string('output_file_name', '', 'Specifies the filename (without suffix) of the output file.')
 # 指令
-gflags.DEFINE_bool('hide', False, 'true时隐藏窗口，最小化到托盘。')
-gflags.DEFINE_bool('show', False, 'true时将主窗口弹出到最前方。')
-gflags.DEFINE_bool('exit', False, 'true时退出Umi-OCR。')
+gflags.DEFINE_bool('hide', False, 'true, Hide window and minimise to tray.')
+gflags.DEFINE_bool('show', False, 'true, pops up the main window to the forefront.')
+gflags.DEFINE_bool('exit', False, 'true, Exit Umi-OCR at the time.')
 # 任务
-gflags.DEFINE_bool('clipboard', False, 'true时读取一次剪贴板进行识图。')
-gflags.DEFINE_bool('screenshot', False, 'true时进行一次截屏识图。')
-gflags.DEFINE_string('img', '', '传入本地图片路径。含空格的路径用引号""括起来。多个路径可用逗号,连接。')
+gflags.DEFINE_bool('clipboard', False, 'true, The clipboard is read once when the map is read.')
+gflags.DEFINE_bool('screenshot', False, 'true, Take a screenshot of the map at the time.')
+gflags.DEFINE_string('img', '', 'Pass in the path to the local image. Paths containing spaces are enclosed in inverted commas. Multiple paths can be joined by commas.')
 
 
 DictDefault = Flags.FlagValuesDict()  # 生成默认值字典
@@ -46,7 +46,7 @@ def Parse(args):  # 解析参数。传入参数列表，返回解析后的字典
                 f['img'] = [f['img']]
         return f
     except Exception as e:
-        return {'error': f'命令行参数解析异常。\n参数：{args}\n错误：{e}', **DictDefault}
+        return {'error': f'Command line argument parsing exception.\nparameters：{args}\nerror：{e}', **DictDefault}
 
 
 def Mission(flags):
@@ -80,7 +80,7 @@ def Mission(flags):
     # 任务
     if not Config.main.isMsnReady():
         tk.messagebox.showerror(
-            '遇到了一点小问题', '当前已有任务进行。')
+            'Had a little problem', 'There is currently a task in progress.')
         return
     if flags['img']:
         Config.main.clearTable()  # 清空表格
@@ -109,7 +109,7 @@ def ParseStr(strin):  # 解析参数。传入参数字符串，直接执行。
     flags = Parse(args)
     if 'error' in flags:
         tk.messagebox.showerror(
-            '遇到了一点小问题', flags['error'])
+            'Had a little problem.', flags['error'])
         return
     Mission(flags)
 
@@ -139,7 +139,7 @@ class Listener:
     async def __listener(self):  # 监听器
         # 检查命名管道是否已存在
         if os.path.exists(pipeName):
-            Log.error(f'命名管道{pipeName}已存在！')
+            Log.error(f'The named pipe {pipeName} already exists!')
             return
         # 设置命名管道
         pipe = win32pipe.CreateNamedPipe(
@@ -161,7 +161,7 @@ class Listener:
         while True:
             try:
                 # 连接命名管道
-                Log.info(f"命名管道{pipeName}等待连接")
+                Log.info(f"Named pipe {pipeName} waiting for connection")
                 win32pipe.ConnectNamedPipe(pipe, None)
 
                 # 循环监听管道传来的消息
@@ -170,11 +170,11 @@ class Listener:
                         # 读取命名管道数据
                         indata = win32file.ReadFile(
                             pipe, pipeBufferSize)
-                        print(f"==============读取数据：\n{indata}")
+                        print(f"============== reads the \n{indata}")
                         data = indata[1].decode()
                         ParseStr(data)  # 分析并执行
                     except Exception as e:
-                        print(f"读取数据出错：{e}")
+                        print(f"Error reading data：{e}")
                         break
             finally:  # 某个客户端断开连接
                 try:

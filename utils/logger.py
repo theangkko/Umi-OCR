@@ -10,7 +10,7 @@ class Logger:
         self.initLogger()
 
     def initLogger(self):
-        '''初始化日志'''
+        '''Initialisation log'''
 
         # 日志
         self.logger = logging.getLogger(LogName)
@@ -25,15 +25,15 @@ class Logger:
         # self.logger.addHandler(streamHandler)
 
         return
-        # 日志文件
+        # log file
         fileHandler = logging.FileHandler(LogFileName)
         fileHandler.setLevel(logging.ERROR)
         formatFile = logging.Formatter(
             '''
 【%(levelname)s】 %(asctime)s
 %(message)s
-    文件：%(module)s | 函数：%(funcName)s | 行号：%(lineno)d
-    线程id：%(thread)d | 线程名：%(thread)s''')
+    papers：%(module)s | function：%(funcName)s | line number：%(lineno)d
+    threads id：%(thread)d | thread name：%(thread)s''')
         fileHandler.setFormatter(formatFile)
         self.logger.addHandler(fileHandler)
 

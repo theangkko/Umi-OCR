@@ -1,7 +1,7 @@
 # 更改OCR语言
-from ui.widget import Widget  # 控件
+from ui.widget import Widget  # control
 from utils.config import Config
-from utils.asset import Asset  # 资源
+from utils.asset import Asset  # resource
 from utils.data_structure import KeyList
 from utils.hotkey import Hotkey
 from utils.logger import GetLog
@@ -18,14 +18,14 @@ class OcrLanguageWin:
         self.win = None
 
     def _initWin(self):
-        # 主窗口
+        # main window
         self.win = tk.Toplevel()
-        self.win.iconphoto(False, Asset.getImgTK('umiocr24'))  # 设置窗口图标
-        self.win.minsize(250, 340)  # 最小大小
+        self.win.iconphoto(False, Asset.getImgTK('umiocr24'))  # Setting the window icon
+        self.win.minsize(250, 340)  # minimum size
         self.win.geometry(f'{250}x{340}')
         self.win.unbind('<MouseWheel>')
         self.win.title('Change Language')
-        self.win.wm_protocol(  # 注册窗口关闭事件
+        self.win.wm_protocol(  # Register window close event
             'WM_DELETE_WINDOW', self.exit)
         fmain = tk.Frame(self.win, padx=4, pady=4)
         fmain.pack(fill='both', expand=True)
@@ -33,10 +33,10 @@ class OcrLanguageWin:
         # 顶部信息
         ftop = tk.Frame(fmain)
         ftop.pack(side='top', fill='x')
-        tk.Label(ftop, text='当前：').pack(side='left')
+        tk.Label(ftop, text='present：').pack(side='left')
         tk.Label(ftop, textvariable=Config.getTK(
             'ocrConfigName')).pack(side='left')
-        wid = tk.Label(ftop, text='提示', fg='deeppink', cursor='question_arrow')
+        wid = tk.Label(ftop, text='prompt', fg='deeppink', cursor='question_arrow')
         wid.pack(side='right')
         Config.main.balloon.bind(
             wid, '''Window Operation:
@@ -57,19 +57,19 @@ manually import PaddleOCR-compatible model libraries, please visit the project's
         ftable = tk.Frame(fmiddle, bg='red')
         ftable.pack(side='left', expand=True, fill='both')
         self.table = ttk.Treeview(
-            master=ftable,  # 父容器
-            # height=50,  # 表格显示的行数,height行
-            columns=['ConfigName'],  # 显示的列
-            show='headings',  # 隐藏首列
+            master=ftable,  # parent container
+            # height=50,  # The number of rows displayed in the table, the height of the rows and the number of rows in the table.
+            columns=['ConfigName'],  # Columns displayed
+            show='headings',  # Hide the first column
         )
         self.table.pack(expand=True, side='left', fill='both')
-        self.table.heading('ConfigName', text='语言')
+        self.table.heading('ConfigName', text='language')
         self.table.column('ConfigName', minwidth=40)
-        vbar = tk.Scrollbar(  # 绑定滚动条
+        vbar = tk.Scrollbar(  # Binding scrollbars
             ftable, orient='vertical', command=self.table.yview)
         vbar.pack(side='left', fill='y')
         self.table["yscrollcommand"] = vbar.set
-        self.table.bind('<ButtonRelease-1>',  # 绑定鼠标松开。按下时先让表格组件更新，松开才能获取到最新值
+        self.table.bind('<ButtonRelease-1>',  # Bind mouse release. When pressed, it first allows the form component to update, and it is released to get the latest value
                         lambda *e: self.updateLanguage())
 
         # fmright = tk.Frame(fmiddle)
@@ -79,34 +79,34 @@ manually import PaddleOCR-compatible model libraries, please visit the project's
         # 底部控制
         fbottom = tk.Frame(fmain)
         fbottom.pack(side='top', fill='x')
-        Widget.comboboxFrame(fbottom, '合并段落：', 'tbpu').pack(
+        Widget.comboboxFrame(fbottom, 'Merge paragraphs：', 'tbpu').pack(
             side='top', fill='x', pady=3)
         wid = ttk.Checkbutton(fbottom, variable=Config.getTK('isLanguageWinAutoOcr'),
-                              text='立即识图')
+                              text='Know Your Maps Now')
         wid.pack(side='left')
-        Config.main.balloon.bind(wid, '修改语言后，立即以当前语言进行一次剪贴板识图')
-        wid = ttk.Button(fbottom, text='关闭', width=5,
+        Config.main.balloon.bind(wid, 'Immediately after modifying the language, a clipboard reading is performed in the current language.')
+        wid = ttk.Button(fbottom, text='disable', width=5,
                          command=self.exit)
         wid.pack(side='right')
         wid = ttk.Checkbutton(fbottom, variable=Config.getTK('isLanguageWinAutoExit'),
-                              text='自动关闭')
+                              text='auto-off')
         wid.pack(side='right', padx=10)
-        Config.main.balloon.bind(wid, '修改语言后，立即关闭本窗口')
+        Config.main.balloon.bind(wid, 'Close this window immediately after changing the language')
 
         self.updateTable()
 
     def open(self):
         if self.win:
-            self.win.state('normal')  # 恢复前台状态
+            self.win.state('normal')  # Restore foreground state
         else:
-            self._initWin()  # 初始化窗口
-        self.win.attributes('-topmost', 1)  # 设置层级最前
+            self._initWin()  # Initialising the window
+        self.win.attributes('-topmost', 1)  # Setting the top of the hierarchy
         if Config.get('isWindowTop'):
-            self.win.title('更改语言(置顶)')
+            self.win.title('Change language (top)')
         else:
-            self.win.title('更改语言')
-            self.win.attributes('-topmost', 0)  # 解除
-        # 窗口移动到鼠标附近
+            self.win.title('Change Language')
+            self.win.attributes('-topmost', 0)  # lift
+        # Window moves near the mouse
         (x, y) = Hotkey.getMousePos()
         w = self.win.winfo_width()
         h = self.win.winfo_height()
@@ -118,7 +118,7 @@ manually import PaddleOCR-compatible model libraries, please visit the project's
         h1 = self.win.winfo_screenheight()
         x -= round(w/2)
         y -= 140
-        # 防止窗口超出屏幕
+        # Preventing windows from exceeding the screen
         if x < 0:
             x = 0
         if y < 0:
@@ -129,7 +129,7 @@ manually import PaddleOCR-compatible model libraries, please visit the project's
             y = h1-h-70
         self.win.geometry(f"+{x}+{y}")
 
-    def updateTable(self):  # 刷新语言表格
+    def updateTable(self):  # Refresh Language Form
         configDist = Config.get('ocrConfig')
         configName = Config.get('ocrConfigName')
         for key, value in configDist.items():

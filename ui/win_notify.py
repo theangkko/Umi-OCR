@@ -64,13 +64,13 @@ class NotifyWindow():
                                            start=90, extent=0)
         # self.canvas.create_text(
         #     winW-xxS2-int(xxS1/2), xxS2+int(xxS1/2), anchor='center',
-        #     font=('Microsoft YaHei', xxS1-xxS2), text='×')
+        #     font=('Malgun Gothic', xxS1-xxS2), text='×')
         # 绘制文本
         self.text1 = self.canvas.create_text(
-            *teP1, anchor='nw', font=('Microsoft YaHei', teS1),
+            *teP1, anchor='nw', font=('Malgun Gothic', teS1),
             text='')
         self.text2 = self.canvas.create_text(
-            *teP2, anchor='nw', font=('Microsoft YaHei', teS2), fill='#666',
+            *teP2, anchor='nw', font=('Malgun Gothic', teS2), fill='#666',
             text='')
 
     @staticmethod

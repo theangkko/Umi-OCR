@@ -1,11 +1,11 @@
-# 文块处理：横排-合并多行-自然段
+# text block processing：Horizontal - combine multiple lines - natural paragraphs
 from ocr.tbpu.merge_line_h_m_left import TbpuLineHMultiLeft
 
 
 class TbpuLineHMultiParagraph(TbpuLineHMultiLeft):
     def __init__(self):
         super().__init__()
-        self.tbpuName = '横排-合并多行-自然段'
+        self.tbpuName = 'Horizontal - combine multiple lines - natural paragraphs'
 
     def isRuleMerge(self, box1, box2):
         '''合并规则：两个box可以合并时返回T'''

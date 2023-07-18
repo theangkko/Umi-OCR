@@ -11,11 +11,11 @@ Log = GetLog()
 
 
 class ShortcutApi:
-    '''操作快捷方式'''
+    '''Operation Shortcuts'''
     @staticmethod  # 询问是否静默启动。返回T为静默启动，F为正常显示窗口
     def askStartupNoWin(action):
         flag = not tk.messagebox.askyesno(
-            '询问', f'通过{action}打开软件时，是否显示主窗口？\n\n是：正常显示主窗口\n否：静默启动，收纳到托盘区')
+            'enquiry', f'Is the main window displayed when the software is opened via {action}? \n\nYes: Normal display of the main window \n No: Silent startup, stowed in the tray area')
         if flag and not Config.get('isTray'):  # 当前配置不显示托盘，则自动启用托盘
             Config.set('isTray', True)
         return flag
@@ -33,8 +33,8 @@ class ShortcutApi:
 
     @staticmethod  # 删除
     def remove(path, name):
-        '''删除目标路径下所有含name的快捷方式，返回删除个数'''
-        num = 0  # 成功个数
+        '''Delete all shortcuts containing name in the target path, return the number of deleted shortcuts.'''
+        num = 0  # successes个数
         subFiles = os.listdir(path)  # 遍历目录下所有文件
         for s in subFiles:
             if name in s and s.endswith('.lnk'):
@@ -44,34 +44,34 @@ class ShortcutApi:
 
     @ staticmethod  # 切换
     def switch(action, path, configItem):
-        '''切换快捷方式。动作名称 | 放置路径 | 设置项名称 | 成功添加时额外提示'''
+        '''切换快捷方式。动作名称 | 放置路径 | 设置项名称 | successes添加时额外提示'''
         flag = Config.get(configItem)
         if flag:
             name = Umi.name
-            Log.info(f'准备添加快捷方式。名称【{name}】，目标路径【{path}】')
+            Log.info(f'Ready to add a shortcut. Name [{name}], destination path [{path}].')
             try:
                 arguments = ''
                 if ShortcutApi.askStartupNoWin(action):
                     arguments = '-hide'
                 ShortcutApi.add(path, name, arguments)
-                tk.messagebox.showinfo('成功', f'{name} 已添加到{action}')
+                tk.messagebox.showinfo('successes', f'{name} Added to{action}')
             except Exception as e:
                 Config.set(configItem, False)
                 tk.messagebox.showerror(
-                    '遇到了一点小问题', f'创建快捷方式失败。请以管理员权限运行软件再重试。\n\n目标路径：{path}\n错误信息：{e}')
+                    'A small problem was encountered', f'Failed to create shortcut. Please run the software with administrator privileges and retry. \n\nTarget path: {path}\nError message: {e}')
         else:
             name = Umi.pname  # 纯名称，无视版本号移除所有相关快捷方式
-            Log.info(f'准备移除快捷方式。名称【{name}】，目标路径【{path}】')
+            Log.info(f'Prepare to remove the shortcut. Name [{name}], destination path [{path}].')
             try:
                 num = ShortcutApi.remove(path, name)
                 if num == 0:
-                    tk.messagebox.showinfo('提示', f'{name} 不存在{action}')
+                    tk.messagebox.showinfo('prompts', f'{name} non-existent{action}')
                 elif num > 0:
                     tk.messagebox.showinfo(
-                        '成功', f'{name} 已移除{num}个{action}')
+                        'successes', f'{name} Removed{num}个{action}')
             except Exception as e:
                 tk.messagebox.showerror(
-                    '遇到了一点小问题', f'删除快捷方式失败。请以管理员权限运行软件再重试。\n\n目标路径：{path}\n错误信息：{e}')
+                    'Had a little problem.', f'Failed to delete the shortcut. Please run the software with administrator privileges and retry. \n\nTarget path: {path}\nError message: {e}')
         if Config.get('isDebug'):
             os.startfile(path)  # 调试模式，打开对应文件夹
 
@@ -82,14 +82,14 @@ class Startup:
     @ staticmethod
     def switchAutoStartup():
         '''切换开机自启'''
-        ShortcutApi.switch('开机启动项', winshell.startup(), 'isAutoStartup')
+        ShortcutApi.switch('boot item', winshell.startup(), 'isAutoStartup')
 
     @ staticmethod
     def switchStartMenu():
         '''切换开始菜单快捷方式'''
-        ShortcutApi.switch('开始菜单', winshell.programs(), 'isStartMenu')
+        ShortcutApi.switch('start menu', winshell.programs(), 'isStartMenu')
 
     @ staticmethod
     def switchDesktop():
         '''切换桌面快捷方式'''
-        ShortcutApi.switch('桌面快捷方式', winshell.desktop(), 'isDesktop')
+        ShortcutApi.switch('desktop shortcut', winshell.desktop(), 'isDesktop')

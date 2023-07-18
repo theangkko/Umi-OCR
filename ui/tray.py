@@ -14,10 +14,10 @@ class Tray:
         self.tray = None
 
     def start(self):
-        aa = ('显示面板', Asset.getPath('app24ico'), self.showWin)
-        bb = ('屏幕截图', Asset.getPath('screenshot24ico'), self.screenshot)
-        cc = ('粘贴图片', Asset.getPath('paste24ico'), self.clipboard)
-        dd = ('更改语言', Asset.getPath('language24ico'),
+        aa = ('display panel', Asset.getPath('app24ico'), self.showWin)
+        bb = ('screenshot', Asset.getPath('screenshot24ico'), self.screenshot)
+        cc = ('Paste Pictures', Asset.getPath('paste24ico'), self.clipboard)
+        dd = ('Change Language', Asset.getPath('language24ico'),
               lambda *e: ChangeOcrLanguage())
         clickTrayMode = Config.get('clickTrayMode').get(
             Config.get('clickTrayModeName'), ClickTrayModeFlag.show)
@@ -31,7 +31,7 @@ class Tray:
         self.tray = SysTrayIcon(
             Asset.getPath('umiocrico'),
             Umi.name, menuOptions,
-            quit_name='退出',
+            quit_name='abort',
             quit_icon=Asset.getPath('exit24ico'),
             on_quit=self.quit)
         self.tray.start()

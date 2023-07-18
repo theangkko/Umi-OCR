@@ -1,11 +1,11 @@
-# 文块处理：横排-单行-模糊匹配
+# text block processing：Horizontal - Single Line - Fuzzy Match
 from ocr.tbpu.merge_line_h import TbpuLineH
 
 
 class TbpuLineHFuzzy(TbpuLineH):
     def __init__(self):
         super().__init__()
-        self.tbpuName = '横排-单行-模糊匹配'
+        self.tbpuName = 'Horizontal - Single Line - Fuzzy Match'
         self.isLimitX = False  # 不考虑文块水平距离
 
     def merge2text(self, text1, text2):

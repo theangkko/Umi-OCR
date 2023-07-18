@@ -18,7 +18,7 @@ class IgnoreAreaWin:
         self.cW = 960  # 画板尺寸
         self.cH = 540
         self.tran = 2  # 绘制偏移量
-        self.areaColor = ["red", "green",  # 各个矩形区域的标志颜色
+        self.areaColor = ["red", "green",  # Logo colour of each rectangular area
                           "darkorange", "white"]
 
         # def initWin():  # 初始化主窗口
@@ -123,7 +123,7 @@ class IgnoreAreaWin:
         # initCanvas()
 
         def initOCR():  # 初始化识别器
-            canvasText = self.canvas.create_text(self.cW/2, self.cH/2, font=('', 15, 'bold'), fill='white', anchor="c",
+            canvasText = self.canvas.create_text(self.cW/2, self.cH/2, font=('', 14, 'bold'), fill='white', anchor="c",
                                                  text=f'The engine is starting, please wait ......')
             try:
                 OCRe.start()  # 启动或刷新引擎
@@ -289,14 +289,14 @@ class IgnoreAreaWin:
 
     def clearCanvas(self):  # 清除画布
         self.lastPath = ''
-        self.win.title(f"选择区域")  # 改变标题
+        self.win.title(f"Select area")  # 改变标题
         self.area = [[], [], []]
         self.areaHistory = []
         self.areaTextRec = []
         self.areaType = -1
         self.areaTypeIndex = [-1, -1, -1]
         self.imgSize = (-1, -1)
-        self.imgSizeText.set("未设定")
+        self.imgSizeText.set("not configured")
         self.canvas.delete(tk.ALL)
         for b in self.buttons:
             b["state"] = tk.NORMAL  # 启用所有按钮

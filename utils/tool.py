@@ -18,7 +18,7 @@ class Tool:
             EmptyClipboard()  # 清空剪贴板
             CloseClipboard()  # 关闭剪贴板
         except Exception as err:
-            Log.info(f'清空剪贴板失败：{err}')
+            Log.info(f'Failed to empty clipboard:{err}')
 
     @staticmethod
     def getClipboardFormat():
@@ -34,7 +34,7 @@ class Tool:
         try:
             OpenClipboard()  # 打开剪贴板
         except Exception as err:
-            Log.info(f'打开剪贴板失败：{err}')
+            Log.info(f'Failed to open clipboard:{err}')
             return None
         uFormat = GetPriorityClipboardFormat(formats)  # 获取剪贴板中第一位的格式
         reData = None
@@ -45,7 +45,7 @@ class Tool:
                 reData = GetClipboardData(uFormat)
             except Exception as err:
                 CloseClipboard()  # 关闭剪贴板
-                Log.info(f'剪贴板获取文件句柄失败：{err}')
+                Log.info(f'Clipboard failed to get file handle：{err}')
                 return None
         # 剪贴板不存在内容，或为不支持的格式
         CloseClipboard()  # 关闭剪贴板

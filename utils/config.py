@@ -87,15 +87,15 @@ _ConfigDict = {
     },
     'clickTrayMode': {  # 点击托盘图标模式
         'default': {
-            '显示面板': ClickTrayModeFlag.show,
-            '屏幕截图': ClickTrayModeFlag.screenshot,
-            '粘贴图片': ClickTrayModeFlag.clipboard,
+            'display panel': ClickTrayModeFlag.show,
+            'screenshot': ClickTrayModeFlag.screenshot,
+            'Paste Pictures': ClickTrayModeFlag.clipboard,
         },
         'isSave': False,
         'isTK': False,
     },
     'textpanelFontFamily': {  # 主输出面板字体
-        'default': 'Microsoft YaHei UI',
+        'default': 'Malgun Gothic',
         'isSave': True,
         'isTK': True,
     },
@@ -187,8 +187,8 @@ _ConfigDict = {
     },
     'scsMode': {  # 截屏模式
         'default': {
-            'Umi-OCR 软件截图': ScsModeFlag.multi,
-            'Windows 系统截图': ScsModeFlag.system,
+            'Windows System Screenshot': ScsModeFlag.system,
+            'Umi-OCR Software screenshots': ScsModeFlag.multi,
         },
         'isSave': False,
         'isTK': False,
@@ -282,9 +282,9 @@ _ConfigDict = {
     'okMission': {  # 计划任务事件，code为cmd代码
         'default': {
             'turn off':  # 取消：shutdown /a
-            {'code': r'msg %username% /time:25 "Umi-OCR task is completed and will switch off after 30s" & echo 关闭本窗口可取消关机 & choice /t 30 /d y /n >nul & shutdown /f /s /t 0'},
+            {'code': r'msg %username% /time:25 "Umi-OCR task is completed and will switch off after 30s" & echo Close this window to cancel the shutdown & choice /t 30 /d y /n >nul & shutdown /f /s /t 0'},
             'sleep':  # 用choice实现延时
-            {'code': r'msg %username% /time:25 "Umi-OCR task completed, will hibernate after 30s" & echo 关闭本窗口可取消休眠 & choice /t 30 /d y /n >nul & shutdown /f /h'},
+            {'code': r'msg %username% /time:25 "Umi-OCR task completed, will hibernate after 30s" & echo Close this window to cancel hibernation & choice /t 30 /d y /n >nul & shutdown /f /h'},
         },
         'isSave': True,
         'isTK': False,
@@ -340,7 +340,7 @@ _ConfigDict = {
     },
     'tbpu': {  # 文块后处理。这个参数通过 ocr\tbpu\__init__.py 导入，避免循环引用
         'default': {
-            '通用': None,
+            'common': None,
         },
         'isSave': False,
         'isTK': False,
@@ -447,12 +447,12 @@ _ConfigDict = {
         'isTK': True,
     },
     # 更改语言窗口
-    'isLanguageWinAutoExit': {  # T时语言窗口自动关闭
+    'isLanguageWinAutoExit': {  # T,The language window closes automatically at T
         'default': False,
         'isSave': True,
         'isTK': True,
     },
-    'isLanguageWinAutoOcr': {  # T时语言窗口修改后重复任务
+    'isLanguageWinAutoOcr': {  # T,Repeat task after T-time language window modification
         'default': False,
         'isSave': True,
         'isTK': True,

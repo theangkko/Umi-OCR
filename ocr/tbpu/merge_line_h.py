@@ -1,4 +1,4 @@
-# 文块处理：横排-单行
+# text block processing：Horizontal - single line
 from ocr.tbpu.tbpu import Tbpu
 
 from time import time
@@ -7,11 +7,11 @@ from time import time
 class TbpuLineH(Tbpu):
     def __init__(self):
         super().__init__()
-        self.tbpuName = '横排-单行'
+        self.tbpuName = 'Horizontal - single line'
         self.isLimitX = True  # 为T时，考虑文块水平距离
 
     def getInitInfo(self):
-        return f'文块后处理：[{self.tbpuName}]'
+        return f'Text block reprocessing：[{self.tbpuName}]'
 
     def merge2text(self, text1, text2):
         '''合并两段文字的规则'''
@@ -70,4 +70,4 @@ class TbpuLineH(Tbpu):
         # 所有新文块，按左上角点的y坐标从高到低排序
         resList.sort(key=lambda tb: tb['box'][0][1])
         # 返回新文块组和debug字符串
-        return resList, f'[{self.tbpuName}] 原{listlen}块，合并后{len(resList)}块，耗时{time()-timeIn}s'
+        return resList, f'[{self.tbpuName}]Original {listlen} block, merged {len(resList)} block, time consuming{time()-timeIn}s'

@@ -21,10 +21,10 @@ class OutputTxt(Output):
                 os.remove(self.outputPath)  # 删除文件
             open(self.outputPath, 'w').close()  # 创建文件
         except FileNotFoundError:
-            raise Exception(f'创建txt文件失败。请检查以下地址是否正确。\n{self.outputPath}')
+            raise Exception(f'Failed to create txt file. Please check if the following address is correct.\n{self.outputPath}')
         except Exception as e:
             raise Exception(
-                f'创建txt文件失败。文件地址：\n{self.outputPath}\n\n错误信息：\n{e}')
+                f'Failed to create txt file. File address:\n{self.outputPath}\n\nerror message：\n{e}')
 
     def print(self, text):
         if self.outputPath:
@@ -40,7 +40,7 @@ class OutputTxt(Output):
         self.print(f'{text}')
 
     def img(self, textBlockList, imgInfo, numData, textDebug):
-        '''输出图片结果'''
+        '''Output image results'''
         # 标题和debug信息
         textDebug = f'```\n{textDebug}```\n' if self.isDebug and textDebug else ''
         textOut = f"\n≦ {imgInfo['name']} ≧\n\n{textDebug}"

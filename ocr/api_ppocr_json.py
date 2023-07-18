@@ -46,7 +46,7 @@ class OcrAPI:
         atexit.register(self.stop)  # 注册程序终止时执行强制停止子进程
         self.psutilProcess = psutilProcess(self.ret.pid)  # 进程监控对象
 
-        self.initErrorMsg = f'OCR init fail.\n引擎路径：{exePath}\n启动参数：{args}'
+        self.initErrorMsg = f'OCR init fail.\nEngine Path:{exePath}\nStartup Parameters:{args}'
 
         # 子线程检查超时
         def cancelTimeout():
@@ -74,37 +74,37 @@ class OcrAPI:
         :exePath: 图片路径。\n
         :return:  {'code': 识别码, 'data': 内容列表或错误信息字符串}\n"""
         if not self.ret.poll() == None:
-            return {'code': 400, 'data': f'子进程已结束。'}
+            return {'code': 400, 'data': f'The subprocess is terminated.'}
         # wirteStr = imgPath if imgPath[-1] == '\n' else imgPath + '\n'
         writeDict = {'image_dir': imgPath}
         try:  # 输入地址转为ascii转义的json字符串，规避编码问题
             wirteStr = jsonDumps(
                 writeDict, ensure_ascii=True, indent=None)+"\n"
         except Exception as e:
-            return {'code': 403, 'data': f'输入字典转json失败。字典：{writeDict} || 报错：[{e}]'}
+            return {'code': 403, 'data': f'Input dictionary to json failed. Dictionary:{writeDict} || report an error：[{e}]'}
         # 输入路径
         try:
             self.ret.stdin.write(wirteStr.encode('ascii'))
             self.ret.stdin.flush()
         except Exception as e:
-            return {'code': 400, 'data': f'向识别器进程写入图片地址失败，疑似子进程已崩溃。{e}'}
+            return {'code': 400, 'data': f'Failed to write image address to recogniser process, suspected child process has crashed.{e}'}
         if imgPath[-1] == '\n':
             imgPath = imgPath[:-1]
         # 获取返回值
         try:
             getStr = self.ret.stdout.readline().decode('utf-8', errors='ignore')
         except Exception as e:
-            return {'code': 401, 'data': f'读取识别器进程输出值失败，疑似传入了不存在或无法识别的图片 \"{imgPath}\" 。{e}'}
+            return {'code': 401, 'data': f'Failed to read the output of the recogniser process, suspected to have passed in a non-existent or unrecognisable image \"{imgPath}\" 。{e}'}
         try:
             return jsonLoads(getStr)
         except Exception as e:
-            return {'code': 402, 'data': f'识别器输出值反序列化JSON失败，疑似传入了不存在或无法识别的图片 \"{imgPath}\" 。异常信息：{e}。原始内容：{getStr}'}
+            return {'code': 402, 'data': f'Failed to deserialise JSON from recogniser output value, suspected to be passing in non-existent or unrecognisable images \"{imgPath}\" . Exception message: {e}. Original content：{getStr}'}
 
     def stop(self):
         self.ret.kill()  # 关闭子进程。误重复调用似乎不会有坏的影响
 
     def getRam(self):
-        """返回内存占用，数字，单位为MB"""
+        """Returns the memory footprint, in numbers, in MB"""
         try:
             return int(self.psutilProcess.memory_info().rss/1048576)
         except Exception as e:
