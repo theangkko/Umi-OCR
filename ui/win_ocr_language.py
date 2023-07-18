@@ -21,8 +21,8 @@ class OcrLanguageWin:
         # main window
         self.win = tk.Toplevel()
         self.win.iconphoto(False, Asset.getImgTK('umiocr24'))  # Setting the window icon
-        self.win.minsize(250, 340)  # minimum size
-        self.win.geometry(f'{250}x{340}')
+        self.win.minsize(300, 400)  # minimum size
+        self.win.geometry(f'{300}x{400}')
         self.win.unbind('<MouseWheel>')
         self.win.title('Change Language')
         self.win.wm_protocol(  # Register window close event
@@ -30,7 +30,7 @@ class OcrLanguageWin:
         fmain = tk.Frame(self.win, padx=4, pady=4)
         fmain.pack(fill='both', expand=True)
 
-        # 顶部信息
+        # Top Message
         ftop = tk.Frame(fmain)
         ftop.pack(side='top', fill='x')
         tk.Label(ftop, text='present：').pack(side='left')
@@ -48,12 +48,12 @@ More languages:
 This software has organised multi-language expansion packs, you can import more language model libraries. You can also
 manually import PaddleOCR-compatible model libraries, please visit the project's Github page for details.''')
 
-        # 中部控制
+        # Central control
         fmiddle = tk.Frame(fmain, pady=4)
         fmiddle.pack(side='top', expand=True, fill='both')
         fmiddle.grid_columnconfigure(0, weight=1)
 
-        # 语言表格
+        # Language Forms
         ftable = tk.Frame(fmiddle, bg='red')
         ftable.pack(side='left', expand=True, fill='both')
         self.table = ttk.Treeview(
@@ -76,7 +76,7 @@ manually import PaddleOCR-compatible model libraries, please visit the project's
         # fmright.pack(side='left', fill='y')
         # tk.Label(fmright, text='右侧').pack(side='left')
 
-        # 底部控制
+        # Bottom Control
         fbottom = tk.Frame(fmain)
         fbottom.pack(side='top', fill='x')
         Widget.comboboxFrame(fbottom, 'Merge paragraphs：', 'tbpu').pack(

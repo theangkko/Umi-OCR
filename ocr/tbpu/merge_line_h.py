@@ -14,15 +14,15 @@ class TbpuLineH(Tbpu):
         return f'Text block reprocessing：[{self.tbpuName}]'
 
     def merge2text(self, text1, text2):
-        '''合并两段文字的规则'''
+        '''Rules for merging two paragraphs'''
         return text1 + text2
 
     def run(self, textBlocks, imgInfo):
-        '''传入 文块组、图片信息。返回文块组、debug信息字符串。'''
+        '''Pass in the block group and image information. Returns the text block group, debug message string.'''
         timeIn = time()
-        # 所有文块，按左上角点的x坐标排序
+        # All text blocks, sorted by the x-coordinate of the point in the upper left corner
         textBlocks.sort(key=lambda tb: tb['box'][0][0])
-        # 遍历每个文块，寻找后续文块中与它接壤、且行高一致的项，合并两个文块
+        # Iterate through each text block to find the item in the subsequent block that borders it and has the same row height, merge the two blocks
         resList = []
         listlen = len(textBlocks)
         for index in range(listlen):
@@ -30,11 +30,11 @@ class TbpuLineH(Tbpu):
             if not tb:
                 continue
             box = tb['box']
-            bx, by = box[1][0], box[1][1]  # 右上角xy
-            bh = box[3][1] - box[0][1]  # 行高
-            limitX, limitY = bh, round(bh/2)  # x、y 合并阈值，行高、行高一半
-            num = 1  # 合并个数
-            # 遍历后续文块
+            bx, by = box[1][0], box[1][1]  # Upper right corner xy
+            bh = box[3][1] - box[0][1]  # your height
+            limitX, limitY = bh, round(bh/2)  # x, y merge threshold, row height, half row height
+            num = 1  # Number of mergers
+            # Iterate over subsequent blocks of text
             for i in range(index+1, listlen):
                 tb2 = textBlocks[i]
                 if not tb2:
@@ -69,5 +69,5 @@ class TbpuLineH(Tbpu):
             resList.append(tb)  # 装填入结果
         # 所有新文块，按左上角点的y坐标从高到低排序
         resList.sort(key=lambda tb: tb['box'][0][1])
-        # 返回新文块组和debug字符串
+        # Returns the new text block group and debug string.
         return resList, f'[{self.tbpuName}]Original {listlen} block, merged {len(resList)} block, time consuming{time()-timeIn}s'

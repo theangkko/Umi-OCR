@@ -1,16 +1,16 @@
-# 批量路径 任务处理器
+# Batch Path Task Processor
 
 from utils.config import Config
-from ui.win_notify import Notify  # 通知弹窗
+from ui.win_notify import Notify  # notification pop-up
 from ocr.engine import MsnFlag
 from ocr.msn import Msn
-# 输出器
+# exporter
 from ocr.output_panel import OutputPanel
 from ocr.output_txt import OutputTxt
 from ocr.output_separate_txt import OutputSeparateTxt
 from ocr.output_md import OutputMD
 from ocr.output_jsonl import OutputJsonl
-# 文块处理器
+# text block processor
 from ocr.tbpu.ignore_area import TbpuIgnoreArea
 
 import time
@@ -60,12 +60,12 @@ class MsnBatch(Msn):
 
         Log.info(f'The batch text processor is initialised!')
 
-    def __output(self,  type_, *data):  # 输出字符串
-        ''' type_ 可选值：
-        none ：不做修改
-        img ：图片结果
-        text ：正文
-        debug ：调试信息
+    def __output(self,  type_, *data):  # output string
+        ''' type_ Optional value:
+        none ：No modification
+        img ：Image result
+        text ：text
+        debug ：Debug information
         '''
         for output in self.outputList:
             if type_ == 'none':
@@ -102,11 +102,11 @@ class MsnBatch(Msn):
         self.setRunning(MsnFlag.running)
 
     def onGet(self, numData, ocrData):
-        # ==================== 分析文块 ====================
-        textBlockList = []  # 文块列表
+        # ==================== analysis block ====================
+        textBlockList = []  # List of text blocks
         textDebug = ''  # 调试信息
         textScore = ''  # 置信度信息
-        imgInfo = self.batList.get(index=numData['index'])  # 获取图片信息
+        imgInfo = self.batList.get(index=numData['index'])  # Get picture information
         flagNoOut = False
         if ocrData['code'] == 100:  # 成功
             textBlockList = ocrData['data']  # 获取文块

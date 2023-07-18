@@ -14,11 +14,11 @@ class Tbpu:
         self.tbpuName = 'Block processing unit -- unknown'
 
     def getInitInfo(self):
-        '''返回初始化信息字符串'''
+        '''Returns the initialization information string'''
         return f'Text block reprocessing：[{self.tbpuName}]'
 
     def run(self, textBlocks, img):
-        '''输入：textBlocks文块 , img图片信息\n
-        输出：textBlocks文块 , 处理日志'''
+        '''Input: textBlocks , img image info\n
+        Output: textBlocks , processing logs '''
         Log.info(f'f: {textBlocks}')
         return textBlocks, f'[{self.tbpuName}]'

@@ -1,11 +1,11 @@
-# 单次快捷任务 任务处理器
+# Single quick task Task processo
 
 from utils.config import Config
 from ocr.engine import MsnFlag
 from ocr.msn import Msn
-from ocr.output_panel import OutputPanel  # 输出器
-from ui.win_notify import Notify  # 通知弹窗
-from utils.hotkey import Hotkey  # 按键
+from ocr.output_panel import OutputPanel  # exporter
+from ui.win_notify import Notify  # notification pop-up
+from utils.hotkey import Hotkey  # shortcut key
 
 import tkinter as tk
 import time
@@ -17,46 +17,46 @@ Log = GetLog()
 
 class MsnQuick(Msn):
 
-    # __init__ 在主线程内初始化，其余方法在子线程内被调用
+    # __init__ Initialized in the main thread, the rest of the methods are called in subthreads
     def __init__(self):
         self.isNeedClear = Config.get('isNeedClear')  # 是否需要清空输出面板
         self.outputPanel = OutputPanel()  # 输出到面板
-        # 初始化文块处理器
+        # Initialize the block processor
         self.procList = []
         tbpuClass = Config.get('tbpu').get(
             Config.get('tbpuName'), None)
         if tbpuClass:
             self.procList.append(tbpuClass())
-        Log.info(f'快捷文本处理器初始化完毕！')
+        Log.info(f'The Quick Text Processor is initialised!')
 
     def onStart(self, num):
-        # 重置进度提示
+        # Reset Progress Alerts
         Config.main.setRunning(MsnFlag.running)  # 先设running，再设进度条动画来覆盖
         progressbar = Config.main.progressbar  # 进度条组件
         progressbar["maximum"] = 50  # 重置进度条长度，值越小加载动画越快
         progressbar['mode'] = 'indeterminate'  # 进度条为来回动模式
         progressbar.start()  # 进度条开始加载动画
-        Config.set('tipsTop2', '快捷识图中……')
+        Config.set('tipsTop2', 'QuickMap in ......')
         # 输出初始信息
         if self.isNeedClear:  # 清空面板
             Config.main.panelClear()
         else:  # 无需清空面板，则输出日志信息
             self.outputPanel.print('\n\n')
-            startStr = f"快捷识图 {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}"
+            startStr = f"fast map recognition {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}"
             self.outputPanel.print(startStr, highlight='blue')
             self.outputPanel.print('\n\n')
 
     def onGet(self, numData, ocrData):
-        # ==================== 分析文块 ====================
+        # ==================== analysis block ====================
         if ocrData['code'] == 100:  # 成功
             tbList = ocrData['data']  # 获取文块
-            # 将文块组导入每一个文块处理器，获取输出文块组
+            # Import block groups into each block processor, get output block groups
             for proc in self.procList:
                 tbList, s = proc.run(tbList, None)
             tbLen = len(tbList)
             if tbLen == 0:
-                self.outputPanel.print('不存在有效文字\n')
-                Notify('未发现文字', '')
+                self.outputPanel.print('No valid text exists\n')
+                Notify('No text found', '')
                 return
             tbTexts = [tb['text'] for tb in tbList]  # 提取文字
             tbStr = '\n'.join(tbTexts)
@@ -70,7 +70,7 @@ class MsnQuick(Msn):
                         if i > 0:  # 间隔
                             time.sleep(kt)
                         Hotkey.send(ks) # 发送按键
-                    Notify(f"已发送按键 {ks}", tbStr)
+                    Notify(f"Sent Keys {ks}", tbStr)
                 except Exception as e:
                     Notify(f"发送按键 {ks} 失败", f"异常：{str(e)}")
             elif Config.get('isNeedCopy'):  # 需要复制

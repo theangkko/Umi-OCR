@@ -1,37 +1,37 @@
-# 调用 PaddleOCR-json.exe 的 Python Api
-# 项目主页：
+# Calling the PaddleOCR-json.exe Python Api
+# Project home page:
 # https://github.com/hiroi-sora/PaddleOCR-json
 
 
 import os
-import atexit  # 退出处理
+import atexit  # Withdrawal processing
 import threading
-import subprocess  # 进程，管道
-from psutil import Process as psutilProcess  # 内存监控
+import subprocess  # Processes, Pipes
+from psutil import Process as psutilProcess  # Memory Monitoring
 from sys import platform as sysPlatform  # popen静默模式
 from json import loads as jsonLoads, dumps as jsonDumps
 
 class OcrAPI:
-    """调用OCR"""
+    """Calling OCR"""
 
     def __init__(self, exePath, configPath="", argsStr="", initTimeout=20):
-        """初始化识别器。\n
-        :exePath: 识别器`PaddleOCR_json.exe`的路径。\n
-        :configPath: 配置文件`PaddleOCR_json_config_XXXX.txt`的路径。\n
-        :argument: 启动参数，字符串。参数说明见\n
-        :initTimeout: 初始化超时时间，秒\n
+        """Initialize the recognizer. \n
+        :exePath: Path to the recognizer `PaddleOCR_json.exe`. \n
+        :configPath: Path to configuration file `PaddleOCR_json_config_XXXX.txt`. \n
+        :argument: Startup argument, string. See \n for parameter description
+        :initTimeout: Initialization timeout, seconds \n
         `https://github.com/hiroi-sora/PaddleOCR-json#5-%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E8%AF%B4%E6%98%8E`\n
         """
         cwd = os.path.abspath(os.path.join(exePath, os.pardir))  # 获取exe父文件夹
-        # 处理启动参数
+        # Handling startup parameters
         args = ' '
-        if argsStr:  # 添加用户指定的启动参数
+        if argsStr:  # Add user-specified startup parameters
             args += f' {argsStr}'
-        if configPath and 'config_path' not in args:  # 指定配置文件
+        if configPath and 'config_path' not in args:  # Specifying configuration files
             args += f' --config_path="{configPath}"'
-        if 'use_debug' not in args:  # 关闭debug模式
+        if 'use_debug' not in args:  # Turn off debug mod
             args += ' --use_debug=0'
-        # 设置子进程启用静默模式，不显示控制台窗口
+        # Set the child process to enable silent mode and not show the console window
         startupinfo = None
         if 'win32' in str(sysPlatform).lower():
             startupinfo = subprocess.STARTUPINFO()
@@ -43,12 +43,12 @@ class OcrAPI:
             stdout=subprocess.PIPE,
             startupinfo=startupinfo  # 开启静默模式
         )
-        atexit.register(self.stop)  # 注册程序终止时执行强制停止子进程
+        atexit.register(self.stop)  # Performs a forced stop of the child process when the registered program terminates
         self.psutilProcess = psutilProcess(self.ret.pid)  # 进程监控对象
 
         self.initErrorMsg = f'OCR init fail.\nEngine Path:{exePath}\nStartup Parameters:{args}'
 
-        # 子线程检查超时
+        # Subthread check timeout
         def cancelTimeout():
             checkTimer.cancel()
 
@@ -58,7 +58,7 @@ class OcrAPI:
         checkTimer = threading.Timer(initTimeout, checkTimeout)
         checkTimer.start()
 
-        # 循环读取，检查成功标志
+        # Cycle through the reads, checking for success flags
         while True:
             if not self.ret.poll() == None:  # 子进程已退出，初始化失败
                 cancelTimeout()
@@ -70,9 +70,9 @@ class OcrAPI:
         cancelTimeout()
 
     def run(self, imgPath):
-        """对一张图片文字识别。\n
-        :exePath: 图片路径。\n
-        :return:  {'code': 识别码, 'data': 内容列表或错误信息字符串}\n"""
+        """Text recognition for a picture. \n
+        :exePath: Path of the image. \n
+        :return: {'code': Recognition code, 'data': Content list or error message string}\n """
         if not self.ret.poll() == None:
             return {'code': 400, 'data': f'The subprocess is terminated.'}
         # wirteStr = imgPath if imgPath[-1] == '\n' else imgPath + '\n'
@@ -101,7 +101,7 @@ class OcrAPI:
             return {'code': 402, 'data': f'Failed to deserialise JSON from recogniser output value, suspected to be passing in non-existent or unrecognisable images \"{imgPath}\" . Exception message: {e}. Original content：{getStr}'}
 
     def stop(self):
-        self.ret.kill()  # 关闭子进程。误重复调用似乎不会有坏的影响
+        self.ret.kill()  # Shut down the child process. Mistakenly repeating a call doesn't seem to have a bad effect
 
     def getRam(self):
         """Returns the memory footprint, in numbers, in MB"""
@@ -112,4 +112,4 @@ class OcrAPI:
 
     def __del__(self):
         self.stop()
-        atexit.unregister(self.stop)  # 移除退出处理
+        atexit.unregister(self.stop)  # Remove exit processing

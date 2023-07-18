@@ -2,7 +2,7 @@ from utils.logger import GetLog
 
 import os
 import sys
-import psutil  # 进程检查
+import psutil  # Process checking
 import json
 from enum import Enum
 import tkinter as tk
@@ -12,49 +12,50 @@ from locale import getdefaultlocale
 Log = GetLog()
 
 
-# 项目属性
+# Project Properties
 class Umi:
-    name = None  # 带版本号的名称
+    name = None  # Name with version number
     pname = None  # 纯名称，固定
     ver = None  # 版本号
     website = None  # 主页
     about = None  # 简介
-    path = os.path.realpath(sys.argv[0])  # 当前入口文件的路径
-    cwd = os.path.dirname(path)  # 当前应设的工作目录
+    path = os.path.realpath(sys.argv[0])  # Path to the current entry file
+    cwd = os.path.dirname(path)  # Current working directory to be established
 
 
-# 重设工作目录，防止开机自启丢失工作目录。此行代码必须比asset.py等模块优先执行
+# Reset the working directory to prevent bootstrap from losing the working directory. 
+# This line of code must take priority over modules such as asset.py
 os.chdir(Umi.cwd)
 
 
-# 枚举
+# enumeration
 class RunModeFlag(Enum):
-    '''进程管理模式标志'''
-    short = 0  # 按需关闭（减少空闲时内存占用）
-    long = 1  # 后台常驻（大幅加快任务启动速度）
+    '''Process Management Model Flag'''
+    short = 0  # On-demand shutdown (reduces memory footprint at idle)
+    long = 1  # Background resident (dramatically speeds up task startup)
 
 
 class ScsModeFlag(Enum):
-    '''截屏模式标志'''
-    multi = 0  # 多屏幕模式，目前仅能适配缩放比相同的多个屏幕
-    system = 1  # 系统截屏模式
+    '''Screenshot Mode Logo'''
+    multi = 0  # Multi-screen mode, currently only adapts to multiple screens with the same zoom ratio
+    system = 1  # System screenshot mode
 
 
 class ClickTrayModeFlag(Enum):
-    '''点击托盘时模式标志'''
-    show = 0  # 显示主面板
-    screenshot = 1  # 截屏
-    clipboard = 2  # 粘贴图片
+    '''Mode flag when clicking on the tray'''
+    show = 0  # Show main panel
+    screenshot = 1  # screenshot
+    clipboard = 2  # Paste Pictures
 
 
 class WindowTopModeFlag():
-    '''窗口置顶模式标志'''
-    # 不继承枚举
-    never = 0  # 永不，静默模式
-    finish = 1  # 任务完成时置顶
+    '''Window top mode flag'''
+    # non-inheritance of enumerations
+    never = 0  # Never. Silent mode.
+    finish = 1  # Top when the task is complete
 
 
-# 配置文件路径
+# Configuration file path
 ConfigJsonFile = 'Umi-OCR_config.json'
 
 # 配置项
@@ -333,35 +334,35 @@ _ConfigDict = {
         'isTK': True,
     },
     # 文块后处理
-    'tbpuName': {  # 当前选择的文块后处理
+    'tbpuName': {  # Currently selected block post-processing
         'default': '',
         'isSave': True,
         'isTK': True,
     },
-    'tbpu': {  # 文块后处理。这个参数通过 ocr\tbpu\__init__.py 导入，避免循环引用
+    'tbpu': {  # Text block post-processing. This parameter is imported via ocr\tbpu\__init__.py to avoid circular references!
         'default': {
             'common': None,
         },
         'isSave': False,
         'isTK': False,
     },
-    'isAreaWinAutoTbpu': {  # T时忽略区域编辑器预览文本块后处理
+    'isAreaWinAutoTbpu': {  # Ignore region editor preview text block post-processing when T
         'default': False,
         'isSave': True,
         'isTK': True,
     },
-    # 引擎设置
-    'ocrToolPath': {  # 引擎路径
+    # Engine settings
+    'ocrToolPath': {  # Engine Path
         'default': 'PaddleOCR-json/PaddleOCR_json.exe',
         'isSave': True,
         'isTK': False,
     },
-    'ocrRunModeName': {  # 当前选择的进程管理策略
+    'ocrRunModeName': {  # Currently selected process management strategy
         'default': '',
         'isSave': True,
         'isTK': True,
     },
-    'ocrRunMode': {  # 进程管理策略
+    'ocrRunMode': {  # Process management strategy
         'default': {
             'Background resident (dramatically speeds up task startup) ': RunModeFlag.long,
             'On-demand shutdown (reduces memory footprint at idle)': RunModeFlag.short,
@@ -369,21 +370,24 @@ _ConfigDict = {
         'isSave': False,
         'isTK': False,
     },
-    'ocrProcessStatus': {  # 进程运行状态字符串，由引擎单例传到tk窗口
+    'ocrProcessStatus': {  # Process runtime status string, passed to the tk window by the engine singleton
         'default': 'inactive',
         'isSave': False,
         'isTK': True,
     },
-    'ocrConfigName': {  # 当前选择的配置文件的name
+    'ocrConfigName': {  # The name of the currently selected configuration file
         'default': '',
         'isSave': True,
         'isTK': True,
     },
     'ocrConfig': {  # Configuration file information
         'default': {  # Configuration file information
-            'simplified Chinese': {
+            'modified English': {
+                'path': 'PaddleOCR_json_config.txt'
+            },
+            'origiranl chinese': {
                 'path': 'PaddleOCR_json_config_ch.txt'
-            }
+            },
         },
         'isSave': True,
         'isTK': False,
