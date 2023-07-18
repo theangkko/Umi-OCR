@@ -47,22 +47,22 @@ class ShowImage:
         # 菜单栏
         self.menubar = tk.Menu(self.win)
         self.win.config(menu=self.menubar)
-        self.menubar.add_command(label='锁定', command=self.__switchLock)
-        self.menubar.add_command(label='识别', command=self.__ocr)
-        self.menubar.add_command(label='保存', command=self.__saveImage)
+        self.menubar.add_command(label='LOCK', command=self.__switchLock)
+        self.menubar.add_command(label='Identify', command=self.__ocr)
+        self.menubar.add_command(label='Save', command=self.__saveImage)
         # self.menubar.add_command(label='复制', command=self.copyImage)
         submenu = tk.Menu(self.menubar, tearoff=False)
-        submenu.add_command(label='锁定窗口：Ctrl+T 或 Ctrl+L',
+        submenu.add_command(label='Lock the window：Ctrl+T 或 Ctrl+L',
                             command=lambda *e: self.__switchLock(1))
-        submenu.add_command(label='文字识别：回车', command=self.__ocr)
-        submenu.add_command(label='保存图片到本地：Ctrl+S', command=self.__saveImage)
-        submenu.add_command(label='复制图片到剪贴板：Ctrl+C', command=self.__copyImage)
-        submenu.add_command(label='关闭窗口：Esc', command=self.__onClose)
-        submenu.add_command(label='移动窗口：拖拽任意位置')
-        submenu.add_command(label='缩放窗口：拖拽右下角箭头图标')
-        submenu.add_command(label='缩放窗口：鼠标滚轮')
-        submenu.add_command(label='调整透明度：Ctrl+滚轮')
-        self.menubar.add_cascade(label='更多', menu=submenu)
+        submenu.add_command(label='Text recognition: Enter', command=self.__ocr)
+        submenu.add_command(label='Saving pictures locally：Ctrl+S', command=self.__saveImage)
+        submenu.add_command(label='Copy image to clipboard：Ctrl+C', command=self.__copyImage)
+        submenu.add_command(label='Close window：Esc', command=self.__onClose)
+        submenu.add_command(label='moving window：Drag and Drop Anywhere')
+        submenu.add_command(label='Zoom window: Drag the arrow icon in the bottom right corner')
+        submenu.add_command(label='Zoom window: mouse wheel')
+        submenu.add_command(label='Adjust transparency: Ctrl+Wheel')
+        self.menubar.add_cascade(label='More', menu=submenu)
 
         # 创建Canvas对象并将其填充为整个窗口
         self.canvas = tk.Canvas(
@@ -326,12 +326,12 @@ class ShowImage:
     def __saveImage(self, e=None):
         # 打开文件选择对话框
         now = time.strftime("%Y-%m-%d %H%M%S", time.localtime())
-        defaultFileName = f'屏幕截图 {now}.png'
+        defaultFileName = f'More screenshots {now}.png'
         filePath = tk.filedialog.asksaveasfilename(
             initialfile=defaultFileName,
             defaultextension='.png',
             filetypes=[('PNG Image', '*.png')],
-            title='保存图片'
+            title='Save Picture'
         )
 
         if filePath:
@@ -344,12 +344,12 @@ class ShowImage:
             EmptyClipboard()  # 清空剪贴板
             SetClipboardData(CF_DIB, self.imgData)  # 写入
         except Exception as err:
-            Notify('位图无法写入剪贴板', f'{err}')
+            Notify('Bitmap cannot be written to clipboard', f'{err}')
         finally:
             try:
                 CloseClipboard()  # 关闭
             except Exception as err:
-                Notify('无法关闭剪贴板', f'{err}')
+                Notify('Unable to close clipboard', f'{err}')
 
     def __onClose(self, e=None):
         self.imgTK = None  # 删除图片对象，释放内存

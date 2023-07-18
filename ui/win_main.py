@@ -36,16 +36,16 @@ Log = GetLog()
 
 class MainWin:
     def __init__(self):
-        self.batList = KeyList()  # 管理批量图片的信息及表格id的列表
+        self.batList = KeyList()  # 管理批量photograph的信息及表格id的列表
         self.tableKeyList = []  # 顺序存放self.imgDict
         self.lockWidget = []  # 需要运行时锁定的组件
 
-        # 1.初始化主窗口
+        # 1.initialisation主窗口
         self.win = tk.Tk()
-        self.win.withdraw()  # 隐藏窗口，等初始化完毕再考虑是否显示
+        self.win.withdraw()  # 隐藏窗口，等initialisation完毕再考虑是否显示
         self.balloon = Balloon(self.win)  # 气泡框
 
-        def initStyle():  # 初始化样式
+        def initStyle():  # initialisation样式
             style = ttk.Style()
             # winnative clam alt default classic vista xpnative
             # style.theme_use('default')
@@ -66,10 +66,10 @@ class MainWin:
 
         def initWin():
             self.win.title(Umi.name)
-            # 窗口大小与位置
-            w, h = 360, 500  # 窗口初始大小与最小大小
+            # Window size and position
+            w, h = 360, 500  # Initial and minimum window size
             ws, hs = self.win.winfo_screenwidth(), self.win.winfo_screenheight()
-            x, y = round(ws/2 - w/2), round(hs/2 - h/2)  # 初始位置，屏幕正中
+            x, y = round(ws/2 - w/2), round(hs/2 - h/2)  # Initial position, centre of screen
             self.win.minsize(w, h)  # 最小大小
             self.win.geometry(f"{w}x{h}+{x}+{y}")  # 初始大小与位置
             self.win.protocol("WM_DELETE_WINDOW", self.onClose)  # 窗口关闭
@@ -81,34 +81,34 @@ class MainWin:
                 80, lambda: self.draggedImages(e)))
             # 图标
             Asset.initRelease()  # 释放base64资源到本地
-            Asset.initTK()  # 初始化tk图片
+            Asset.initTK()  # initialisationtkphotograph
             self.win.iconphoto(False, Asset.getImgTK('umiocr24'))  # 设置窗口图标
         initWin()
 
-        # 2.初始化配置项
-        self.win.bind('<<QuitEvent>>', lambda *e: self.onClose())  # 退出事件
-        Config.initTK(self)  # 初始化设置项
+        # 2.Initialising configuration items
+        self.win.bind('<<QuitEvent>>', lambda *e: self.onClose())  # exit event
+        Config.initTK(self)  # initialisation设置项
         Config.load()  # 加载本地文件
         Config.checkMultiOpen()  # 检查多开
 
-        # 3.初始化组件
-        def initTop():  # 顶部按钮
+        # 3.Initialising components
+        def initTop():  # top button
             tk.Frame(self.win, height=5).pack(side='top')
             fr = tk.Frame(self.win)
             fr.pack(side='top', fill="x", padx=5)
-            # 右侧按钮
-            self.btnRun = ttk.Button(fr, command=self.run, text='开始任务',
+            # right button
+            self.btnRun = ttk.Button(fr, command=self.run, text='Commencement of mission',
                                      style='go.TButton')
             self.btnRun.pack(side='right', fill='y')
-            # 左侧文本和进度条
+            # Left side text and progress bar
             vFrame2 = tk.Frame(fr)
             vFrame2.pack(side='top', fill='x')
-            # 进度条上方
+            # top of the progress bar
             wid = ttk.Checkbutton(vFrame2, variable=Config.getTK('isWindowTop'),
-                                  text='窗口置顶', style='gray.TCheckbutton')
+                                  text='window topping', style='gray.TCheckbutton')
             wid.pack(side='left')
             self.balloon.bind(
-                wid, '窗口锁定于系统顶层\n\n启用后，软件内的鼠标悬停提示框会被隐藏')
+                wid, 'Window locked at the top of the system\n\nWhen enabled, the mouse hover alert box within the software will be hidden')
             tk.Label(vFrame2, textvariable=Config.getTK('tipsTop2')).pack(
                 side='right', padx=2)
             tk.Label(vFrame2, textvariable=Config.getTK('tipsTop1')).pack(
@@ -117,15 +117,15 @@ class MainWin:
             self.progressbar.pack(side='top', padx=2, pady=2, fill="x")
         initTop()
 
-        self.notebook = ttk.Notebook(self.win)  # 初始化选项卡组件
-        self.notebook.pack(expand=True, fill=tk.BOTH)  # 填满父组件
+        self.notebook = ttk.Notebook(self.win)  # Initialising the tab component
+        self.notebook.pack(expand=True, fill=tk.BOTH)  # Fill parent component
         self.notebookTab = []
 
-        def initTab1():  # 表格卡
-            tabFrameTable = tk.Frame(self.notebook)  # 选项卡主容器
+        def initTab1():  # form card
+            tabFrameTable = tk.Frame(self.notebook)  # Tab Master Container
             self.notebookTab.append(tabFrameTable)
-            self.notebook.add(tabFrameTable, text=f'{"批量处理": ^10s}')
-            # 顶栏
+            self.notebook.add(tabFrameTable, text=f'{"batch file": ^10s}')
+            # parapet
             fr1 = tk.Frame(tabFrameTable)
             fr1.pack(side='top', fill='x', padx=1, pady=1)
             # 左
@@ -133,41 +133,41 @@ class MainWin:
                              command=self.openScreenshot,
                              style='icon.TButton',  takefocus=0,)
             self.balloon.bind(
-                btn, '屏幕截图　　说明\n左键拖拽：框选区域\n右键点击：取消框选\n　　 Esc：退出截图')
+                btn, 'Screenshot Description\nLeft Drag: Boxed Area\nRight Click: Unboxing\n　　 Esc：Exit Screenshot')
             btn.pack(side='left')
             self.lockWidget.append(btn)
             btn = ttk.Button(fr1, image=Asset.getImgTK('paste24'),  # 剪贴板按钮
                              command=self.runClipboard,
                              style='icon.TButton',  takefocus=0,)
-            self.balloon.bind(btn, '粘贴图片')
+            self.balloon.bind(btn, 'Paste Pictures')
             btn.pack(side='left')
             self.lockWidget.append(btn)
             btn = ttk.Button(fr1, image=Asset.getImgTK('language24'),  # 语言按钮
                              command=ChangeOcrLanguage,
                              style='icon.TButton',  takefocus=0)
-            self.balloon.bind(btn, '更改OCR语言')
+            self.balloon.bind(btn, 'Change OCR language')
             btn.pack(side='left')
             self.lockWidget.append(btn)
             # 右
             btn = ttk.Button(fr1, image=Asset.getImgTK('clear24'),  # 清空按钮
                              command=self.clearTable,
                              style='icon.TButton',  takefocus=0,)
-            self.balloon.bind(btn, '清空表格')
+            self.balloon.bind(btn, 'Empty the form')
             btn.pack(side='right')
             self.lockWidget.append(btn)
             btn = ttk.Button(fr1, image=Asset.getImgTK('delete24'),  # 删除按钮
                              command=self.delImgList,
                              style='icon.TButton',  takefocus=0,)
-            self.balloon.bind(btn, '移除选中的文件\n按住Shift或Ctrl，点击左键可选中多个文件')
+            self.balloon.bind(btn, 'Remove selected files \n hold Shift orCtrl，Left click to select multiple files')
             btn.pack(side='right')
             self.lockWidget.append(btn)
             btn = ttk.Button(fr1, image=Asset.getImgTK('openfile24'),  # 打开文件按钮
                              command=self.openFileWin,
                              style='icon.TButton',  takefocus=0,)
-            self.balloon.bind(btn, '浏览文件')
+            self.balloon.bind(btn, 'Browse Documents')
             btn.pack(side='right')
             self.lockWidget.append(btn)
-            # 表格主体
+            # body of the form
             fr2 = tk.Frame(tabFrameTable)
             fr2.pack(side='top', fill='both')
             self.table = ttk.Treeview(
@@ -177,13 +177,13 @@ class MainWin:
                 show='headings',  # 隐藏首列
             )
             self.table.pack(expand=True, side="left", fill='both')
-            self.table.heading('name', text='文件名称')
-            self.table.heading('time', text='耗时')
-            self.table.heading('score', text='置信度')
+            self.table.heading('name', text='Name of the document')
+            self.table.heading('time', text='take a period of ')
+            self.table.heading('score', text='confidence level ')
             self.table.column('name', minwidth=40)
             self.table.column('time', width=20, minwidth=20)
             self.table.column('score', width=30, minwidth=30)
-            vbar = tk.Scrollbar(  # 绑定滚动条
+            vbar = tk.Scrollbar(  # Binding scrollbars
                 fr2, orient='vertical', command=self.table.yview)
             vbar.pack(side="left", fill='y')
             self.table["yscrollcommand"] = vbar.set
@@ -192,7 +192,7 @@ class MainWin:
         def initTab2():  # 输出卡
             tabFrameOutput = tk.Frame(self.notebook)  # 选项卡主容器
             self.notebookTab.append(tabFrameOutput)
-            self.notebook.add(tabFrameOutput, text=f'{"识别内容": ^10s}')
+            self.notebook.add(tabFrameOutput, text=f'{"Content": ^10s}')
             fr1 = tk.Frame(tabFrameOutput)
             fr1.pack(side='top', fill='x', padx=1, pady=1)
             self.isAutoRoll = tk.IntVar()
@@ -202,19 +202,19 @@ class MainWin:
                              command=self.openScreenshot,
                              style='icon.TButton',  takefocus=0,)
             self.balloon.bind(
-                btn, '屏幕截图　　说明\n左键拖拽：框选区域\n右键点击：取消框选\n　　 Esc：退出截图')
+                btn, 'Screenshot Description\nLeft Drag: Boxed Area\nRight Click: Unboxing\n　　 Esc：Exit Screenshot')
             btn.pack(side='left')
             self.lockWidget.append(btn)
             btn = ttk.Button(fr1, image=Asset.getImgTK('paste24'),  # 剪贴板按钮
                              command=self.runClipboard,
                              style='icon.TButton',  takefocus=0,)
-            self.balloon.bind(btn, '粘贴图片')
+            self.balloon.bind(btn, 'Paste Pictures')
             btn.pack(side='left')
             self.lockWidget.append(btn)
             btn = ttk.Button(fr1, image=Asset.getImgTK('language24'),  # 语言按钮
                              command=ChangeOcrLanguage,
                              style='icon.TButton',  takefocus=0)
-            self.balloon.bind(btn, '更改OCR语言')
+            self.balloon.bind(btn, 'Change OCR language')
             btn.pack(side='left')
             self.lockWidget.append(btn)
 
@@ -222,16 +222,16 @@ class MainWin:
             btn = ttk.Button(fr1, image=Asset.getImgTK('clear24'),  # 清空按钮
                              command=self.panelClear,
                              style='icon.TButton',  takefocus=0,)
-            self.balloon.bind(btn, '清空输出面板\n在【设置→快捷识图】可启用自动清空面板')
+            self.balloon.bind(btn, 'Empty the output panel \n [Settings→Quick Graphics] to enable the automatic clearing of the panel')
             btn.pack(side='right')
 
-            ttk.Checkbutton(fr1, variable=self.isAutoRoll, text="自动滚动",
+            ttk.Checkbutton(fr1, variable=self.isAutoRoll, text="autoscrolling",
                             takefocus=0,).pack(side='right')
-            tf = tk.Label(fr1, text='字体', fg='gray', cursor='hand2')
+            tf = tk.Label(fr1, text='calligraphic style', fg='gray', cursor='hand2')
             tf.pack(side='right', padx=10)
             tf.bind(
                 '<Button-1>', lambda *e: self.notebook.select(self.notebookTab[2]))  # 转到设置卡
-            self.balloon.bind(tf, '在【设置】选项卡更改输出面板的字体')
+            self.balloon.bind(tf, 'Changing the font of the output panel in the [Settings] tab')
 
             fr2 = tk.Frame(tabFrameOutput)
             fr2.pack(side='top', fill='both')
@@ -239,20 +239,20 @@ class MainWin:
             vbar.pack(side="right", fill='y')
             self.textOutput = tk.Text(fr2, height=500, width=500)
             self.textOutput.pack(fill='both', side="left")
-            self.textOutput.tag_config(  # 添加高亮标签
+            self.textOutput.tag_config(  # Adding Highlighted Tags
                 'blue', foreground='blue')
-            self.textOutput.tag_config(  # 添加高亮标签
+            self.textOutput.tag_config(  # Adding Highlighted Tags
                 'red', foreground='red')
             vbar["command"] = self.textOutput.yview
             self.textOutput["yscrollcommand"] = vbar.set
         initTab2()
 
-        def initTab3():  # 设置卡
+        def initTab3():  # setup card
             tabFrameConfig = tk.Frame(self.notebook)  # 选项卡主容器
             self.notebookTab.append(tabFrameConfig)
-            self.notebook.add(tabFrameConfig, text=f'{"设置": ^10s}')
+            self.notebook.add(tabFrameConfig, text=f'{"set up": ^10s}')
 
-            def initOptFrame():  # 初始化可滚动画布 及 内嵌框架
+            def initOptFrame():  # initialisation可滚动画布 及 内嵌框架
                 optVbar = tk.Scrollbar(
                     tabFrameConfig, orient="vertical")  # 创建滚动条
                 optVbar.pack(side="right", fill="y")
@@ -275,7 +275,7 @@ class MainWin:
                 fTips.pack(side='top')
                 tipsLab = tk.Label(
                     fTips, fg='red',
-                    text='关闭窗口置顶，方可显示鼠标悬停提示框')
+                    text='Close the top of the window to show the mouse hover box.')
                 if Config.get('isWindowTop'):
                     tipsLab.pack(side='top')
                 tk.Frame(fTips).pack(side='top')  # 空框架，用于自动调整高度的占位
@@ -292,7 +292,7 @@ class MainWin:
 
             def initSoftwareFrame():  # 软件行为设置
                 fSoft = tk.LabelFrame(
-                    self.optFrame, text='通用设置')
+                    self.optFrame, text='General Settings')
                 fSoft.pack(side='top', fill='x',
                            ipady=2, pady=LabelFramePadY, padx=4)
 
@@ -300,8 +300,8 @@ class MainWin:
                 fr3 = tk.Frame(fSoft)
                 fr3.pack(side='top', fill='x', pady=2, padx=5)
                 fr3.grid_columnconfigure(1, weight=1)
-                self.balloon.bind(fr3, '调整【识别内容】选项卡中输出面板的字体样式')
-                tk.Label(fr3, text='输出面板字体').grid(column=0, row=0, sticky='w')
+                self.balloon.bind(fr3, 'Adjusting the font style of the output panel in the [Identify Content] tab')
+                tk.Label(fr3, text='Output Panel Fonts').grid(column=0, row=0, sticky='w')
                 ff = tk.font.families()  # 获取系统字体
                 fontFamilies = []
                 fontFamiliesABC = []
@@ -315,17 +315,17 @@ class MainWin:
                 cbox = ttk.Combobox(fr3, state='readonly', takefocus=0,
                                     textvariable=Config.getTK('textpanelFontFamily'), value=fontFamilies)
                 cbox.grid(column=1, row=0, sticky='ew')
-                self.balloon.bind(cbox, '不要使用滚轮。\n请用上下方向键或拉动滚动条来浏览列表')
-                tk.Label(fr3, text='字号').grid(column=2, row=0, sticky='w')
+                self.balloon.bind(cbox, 'Do not use the scroll wheel. \nPlease use the up and down arrow keys or pull the scroll bar to navigate the list')
+                tk.Label(fr3, text='font size').grid(column=2, row=0, sticky='w')
                 tk.Entry(fr3, textvariable=Config.getTK('textpanelFontSize'),
                          width=4, takefocus=0).grid(column=3, row=0, sticky='w')
                 tk.Label(fr3, text=' ').grid(column=4, row=0, sticky='w')
-                ttk.Checkbutton(fr3, text='加粗',
+                ttk.Checkbutton(fr3, text='thicken',
                                 variable=Config.getTK('isTextpanelFontBold')).grid(column=5, row=0, sticky='w')
                 # 检查当前配置字体是否存在
                 f = Config.get('textpanelFontFamily')
                 if f and f not in fontFamilies:
-                    Log.error(f'配置输出面板字体【{f}】不存在。重置为空')
+                    Log.error(f'Configuring Output Panel Fonts【{f}】Does not exist. Reset to empty')
                     Config.set('textpanelFontFamily', '')
 
                 def updateTextpanel():
@@ -343,82 +343,82 @@ class MainWin:
                 fr1.pack(side='top', fill='x', pady=2, padx=5)
                 fr1.grid_columnconfigure(1, weight=1)
                 self.balloon.bind(
-                    fr1, '可关闭/开启系统托盘图标，修改双击图标时触发的功能\n该项目修改后，下次打开软件生效')
-                wid = ttk.Checkbutton(fr1, text='显示系统托盘图标',
+                    fr1, 'You can turn off/on the system tray icon, modify the function triggered when you double-click the icon \n the item is modified, the next time you open the software to take effect')
+                wid = ttk.Checkbutton(fr1, text='Show system tray icon',
                                       variable=Config.getTK('isTray'))
                 wid.grid(column=0, row=0, sticky='w')
-                Widget.comboboxFrame(fr1, '，双击图标', 'clickTrayMode', width=12).grid(
+                Widget.comboboxFrame(fr1, '，double-click icon', 'clickTrayMode', width=12).grid(
                     column=1, row=0, sticky='w')
 
                 fr2 = tk.Frame(fSoft)
                 fr2.pack(side='top', fill='x', pady=2, padx=5)
-                tk.Label(fr2, text='主窗口关闭：').pack(side='left', padx=2)
-                ttk.Radiobutton(fr2, text='退出软件',
+                tk.Label(fr2, text='Main window closed：').pack(side='left', padx=2)
+                ttk.Radiobutton(fr2, text='Exiting the software',
                                 variable=Config.getTK('isBackground'), value=False).pack(side='left')
-                wid = ttk.Radiobutton(fr2, text='最小化到托盘',
+                wid = ttk.Radiobutton(fr2, text='Minimise to tray',
                                       variable=Config.getTK('isBackground'), value=True)
                 wid.pack(side='left', padx=15)
-                self.balloon.bind(wid, '显示系统托盘图标时，本选项才有效')
+                self.balloon.bind(wid, 'This option is available when the system tray icon is displayed')
 
                 # 弹出方式设置
                 fr3 = tk.Frame(fSoft)
                 fr3.pack(side='top', fill='x', pady=2, padx=5)
-                tk.Label(fr3, text='主窗口弹出：').pack(side='left', padx=2)
-                wid = ttk.Radiobutton(fr3, text='自动弹出',
+                tk.Label(fr3, text='main window pop-up：').pack(side='left', padx=2)
+                wid = ttk.Radiobutton(fr3, text='pop-up automatically',
                                       variable=Config.getTK('WindowTopMode'), value=WindowTopModeFlag.finish)
                 wid.pack(side='left')
                 self.balloon.bind(
-                    wid, '唤起快捷识图、或批量任务完成时弹出主窗口')
-                wid = ttk.Radiobutton(fr3, text='静默模式',
+                    wid, 'Evokes a pop-up window when a quick map, or a batch task is completed.')
+                wid = ttk.Radiobutton(fr3, text='silent mode',
                                       variable=Config.getTK('WindowTopMode'), value=WindowTopModeFlag.never)
                 wid.pack(side='left', padx=15)
                 self.balloon.bind(
-                    wid, '不会主动弹出窗口\n建议启用通知弹窗')
+                    wid, 'No active pop-ups\n Recommended to enable notification pop-ups')
 
                 # 消息弹窗设置
                 def changeNotify():
                     if Config.get('isNotify'):
-                        Notify('欢迎使用 Umi-OCR', '通知弹窗已开启')
+                        Notify('Welcome to Umi-OCR', 'Notification popups are enabled!')
                 Config.addTrace('isNotify', changeNotify)
                 fr4 = tk.Frame(fSoft)
                 fr4.pack(side='top', fill='x', pady=2, padx=5)
                 ttk.Checkbutton(
-                    fr4, variable=Config.getTK('isNotify'), text='启用通知弹窗').pack(side='left')
+                    fr4, variable=Config.getTK('isNotify'), text='Enable notification pop-ups').pack(side='left')
 
                 # 启动方式设置
                 fr5 = tk.Frame(fSoft)
                 fr5.pack(side='top', fill='x', pady=2, padx=5)
                 self.balloon.bind(
-                    fr5, '可设置静默启动，收纳到系统托盘，不显示主窗口')
+                    fr5, 'Can be set to start silently, stowed in the system tray, without displaying the main window')
                 ttk.Checkbutton(fr5, variable=Config.getTK('isAutoStartup'),
-                                text='开机自启', command=Startup.switchAutoStartup).pack(side='left')
+                                text='boot up (computer)', command=Startup.switchAutoStartup).pack(side='left')
                 ttk.Checkbutton(fr5, variable=Config.getTK('isStartMenu'),
-                                text='开始菜单项', command=Startup.switchStartMenu).pack(side='left', padx=20)
+                                text='Start menu item', command=Startup.switchStartMenu).pack(side='left', padx=20)
                 ttk.Checkbutton(fr5, variable=Config.getTK('isDesktop'),
-                                text='桌面快捷方式', command=Startup.switchDesktop).pack(side='left')
+                                text='desktop shortcut', command=Startup.switchDesktop).pack(side='left')
             initSoftwareFrame()
 
-            def quickOCR():  # 快捷识图设置
+            def quickOCR():  # Quick Map Settings
                 fQuick = tk.LabelFrame(
-                    self.optFrame, text='快捷识图')
+                    self.optFrame, text='fast map recognition')
                 fQuick.pack(side='top', fill='x',
                             ipady=2, pady=LabelFramePadY, padx=4)
                 # 截图快捷键触发时，子线程向主线程发送事件，在主线程中启动截图窗口
                 # 避免子线程直接唤起截图窗导致的窗口闪烁现象
                 self.win.bind('<<ScreenshotEvent>>',
                               self.openScreenshot)  # 绑定截图事件
-                cbox = Widget.comboboxFrame(fQuick, '截图模块：', 'scsMode')
+                cbox = Widget.comboboxFrame(fQuick, 'Screenshot Module：', 'scsMode')
                 cbox.pack(side='top', fill='x', padx=4)
                 self.balloon.bind(
-                    cbox, '切换截图工作模块\n\n【Umi-OCR 软件截图】方便、精准\n【Windows 系统截图】兼容性更好')
+                    cbox, 'Switch screenshot work module\n\n [Umi-OCR software screenshot] convenient, accurate\n [Windows system screenshot] compatibility better')
                 frss = tk.Frame(fQuick)
                 frss.pack(side='top', fill='x')
                 fhkUmi = tk.Frame(frss)
                 fhkUmi.pack(side='top', fill='x')
                 fhkU0 = tk.Frame(fhkUmi)
                 fhkU0.pack(side='top', fill='x', pady=2)
-                tk.Label(fhkU0, text='指示器颜色：').pack(side='left')
-                self.balloon.bind(fhkU0, '修改截图时指示器的颜色\n该项目修改后，下次打开软件生效')
+                tk.Label(fhkU0, text='Indicator Colour：').pack(side='left')
+                self.balloon.bind(fhkU0, 'Modify the colour of the indicator when taking a screenshot \n After modifying this item, it will take effect the next time you open the software.')
 
                 def changeColor(configName, title=None):
                     initColor = Config.get(configName)
@@ -426,53 +426,53 @@ class MainWin:
                         color=initColor, title=title)
                     if color[1]:
                         Config.set(configName, color[1])
-                lab1 = tk.Label(fhkU0, text='十字线', cursor='hand2', fg='blue')
+                lab1 = tk.Label(fhkU0, text='crosshairs', cursor='hand2', fg='blue')
                 lab1.pack(side='left', padx=9)
                 lab1.bind(
-                    '<Button-1>', lambda *e: changeColor('scsColorLine', '截图十字线颜色'))
-                lab2 = tk.Label(fhkU0, text='虚线框表层', cursor='hand2', fg='blue')
+                    '<Button-1>', lambda *e: changeColor('scsColorLine', 'Screenshot crosshair colour'))
+                lab2 = tk.Label(fhkU0, text='dotted line box surface', cursor='hand2', fg='blue')
                 lab2.pack(side='left', padx=9)
                 lab2.bind(
-                    '<Button-1>', lambda *e: changeColor('scsColorBoxUp', '截图矩形框 虚线表层颜色'))
-                lab3 = tk.Label(fhkU0, text='虚线框底层', cursor='hand2', fg='blue')
+                    '<Button-1>', lambda *e: changeColor('scsColorBoxUp', 'Screenshot Rectangular Box Dashed Layer Colour'))
+                lab3 = tk.Label(fhkU0, text='Bottom of the dotted line box', cursor='hand2', fg='blue')
                 lab3.pack(side='left', padx=9)
                 lab3.bind(
-                    '<Button-1>', lambda *e: changeColor('scsColorBoxDown', '截图矩形框 虚线底层颜色'))
-                wid = Widget.hotkeyFrame(fhkUmi, '截图识别　快捷键　', 'Screenshot',
+                    '<Button-1>', lambda *e: changeColor('scsColorBoxDown', 'Screenshot Rectangle Dashed Underline Colour'))
+                wid = Widget.hotkeyFrame(fhkUmi, 'Screenshot Recognition Shortcut', 'Screenshot',
                                          lambda *e: self.win.event_generate(
                                              '<<ScreenshotEvent>>'), isAutoBind=False)
                 wid.pack(side='top', fill='x')
                 self.balloon.bind(
-                    wid, '关闭快捷键后，仍能通过面板上的按钮或托盘小图标调用截图\n点击【修改】可设置自定义快捷键')
+                    wid, 'After closing the shortcut key, you can still call the screenshot via the button on the panel or the small tray icon \n Click [Modify] to set the custom shortcut key.')
 
                 syssscom = 'win+shift+s'
-                fhkSys = Widget.hotkeyFrame(frss, '系统截图　快捷键　', 'Screenshot',
+                fhkSys = Widget.hotkeyFrame(frss, 'System Screenshot Shortcut', 'Screenshot',
                                             lambda *e: self.win.event_generate(
                                                 '<<ScreenshotEvent>>'), True, syssscom, isAutoBind=False)
                 self.balloon.bind(
-                    fhkSys, '监听到系统截图后调用OCR\n\n若截图后软件没有反应，请确保windows系统自带的\n【截图和草图】中【自动复制到剪贴板】开关处于打开状态')
+                    fhkSys, 'Listen to the system screenshot and call OCR\n\nIf the software does not respond after the screenshot, please ensure that the windows system comes with \n [Screenshots and Sketches] in the [Auto Copy to Clipboard] switch is on!')
 
                 wid = Widget.hotkeyFrame(
-                    fQuick, '粘贴图片　快捷键　', 'Clipboard', self.runClipboard, isAutoBind=True)
+                    fQuick, 'Paste Picture Shortcut', 'Clipboard', self.runClipboard, isAutoBind=True)
                 wid.pack(side='top', fill='x', padx=4)
-                self.balloon.bind(wid, '尝试读取剪贴板，若存在图片则调用OCR\n点击【修改】可设置自定义快捷键')
-                if Config.get('isAdvanced'):  # 隐藏高级选项：组合键判定调节
+                self.balloon.bind(wid, 'Try to read the clipboard, if there is a picture then call OCR\n Click [Modify] to set a custom shortcut key')
+                if Config.get('isAdvanced'):  # Hidden Advanced Options: Key Combination Determination Adjustment
                     fr1 = tk.Frame(fQuick)
                     fr1.pack(side='top', fill='x', pady=2, padx=5)
-                    tk.Label(fr1, text='　 组合键：').pack(side='left')
+                    tk.Label(fr1, text=' key combination：').pack(side='left')
                     fr11 = tk.Frame(fr1)
                     fr11.pack(side='left')
                     self.balloon.bind(
-                        fr11, '宽松：当前按下的按键只要包含设定的组合键，就能触发\n严格：当前按下的按键必须与设定的组合一致，才能触发')
-                    tk.Label(fr11, text='触发判定').pack(side='left')
-                    ttk.Radiobutton(fr11, text='宽松',
+                        fr11, 'Lax: the currently pressed key can be triggered as long as it contains the set key combination \n Strict: the currently pressed key must match the set combination in order to be triggered')
+                    tk.Label(fr11, text='Trigger judgement').pack(side='left')
+                    ttk.Radiobutton(fr11, text='liberally',
                                     variable=Config.getTK('isHotkeyStrict'), value=False).pack(side='left')
-                    ttk.Radiobutton(fr11, text='严格',
+                    ttk.Radiobutton(fr11, text='severity',
                                     variable=Config.getTK('isHotkeyStrict'), value=True).pack(side='left')
                     fr12 = tk.Frame(fr1)
                     fr12.pack(side='left')
-                    self.balloon.bind(fr12, '必须在该时间之内\n连续按下组合中的所有按键，才能触发')
-                    tk.Label(fr12, text='，时限').pack(side='left')
+                    self.balloon.bind(fr12, 'All keys in the combination must be pressed consecutively within that time \n order to trigger the')
+                    tk.Label(fr12, text='，time limit：').pack(side='left')
                     tk.Entry(fr12,
                              textvariable=Config.getTK('hotkeyMaxTtl'), width=4).pack(side='left')
                     tk.Label(fr12, text='秒').pack(side='left')
@@ -481,38 +481,38 @@ class MainWin:
                 fr2.pack(side='top', fill='x', pady=2, padx=5)
                 fr2.grid_columnconfigure(1, minsize=20)
                 wid = ttk.Checkbutton(fr2, variable=Config.getTK('isScreenshotHideWindow'),
-                                      text='隐藏主窗口')
+                                      text='Hide main window')
                 wid.grid(column=0, row=0, sticky='w')
                 self.balloon.bind(
-                    wid, f'截图前隐藏主窗口\n会延迟{Config.get("screenshotHideWindowWaitTime")}毫秒以等待窗口动画')
+                    wid, f'Hide main window before screenshot \n will delay {Config.get("screenshotHideWindowWaitTime")} milliseconds to wait for the window animation')
                 wid = ttk.Checkbutton(fr2, variable=Config.getTK('isShowImage'),
-                                      text='截图预览窗口')
+                                      text='Screenshot preview window')
                 wid.grid(column=2, row=0)
                 self.balloon.bind(
-                    wid, f'不勾选：截图后立刻OCR识图\n勾选：截图后展示图片，可稍后识别或保存图片')
+                    wid, f'Unchecked: OCR immediately after the screenshot \n Ticked: after the screenshot to show the photograph, can be recognised later or save the photographic')
                 wid = ttk.Checkbutton(fr2, variable=Config.getTK('isNeedCopy'),
-                                      text='自动复制结果')
+                                      text='Automatic copying of results')
                 wid.grid(column=0, row=1)
-                self.balloon.bind(wid, '快捷识图完成后，将得到的文本复制到剪贴板')
+                self.balloon.bind(wid, 'After fast map recognition is complete, copy the resulting text to the clipboard')
                 wid = ttk.Checkbutton(fr2, variable=Config.getTK('isNeedClear'),
-                                      text='自动清空面板')
+                                      text='Auto Empty Panel')
                 wid.grid(column=2, row=1)
-                self.balloon.bind(wid, f'每次快捷识图将清空识别内容面板，同时省略时间等信息')
+                self.balloon.bind(wid, f'Each fast map recognition will empty the recognition content panel and omit information such as time.')
 
                 if Config.get('isAdvanced'):  # 隐藏高级选项：截图联动
                     frSend = tk.Frame(fQuick)
                     frSend.pack(side='top', fill='x', pady=2, padx=4)
                     frSend.grid_columnconfigure(0, weight=1)
-                    self.balloon.bind(frSend, '截图联动：按下快捷键，执行截图OCR并将结果复制到剪贴板，\n然后发送指定键盘按键\n可用于联动唤起翻译器或AHK等工具\n次：重复发送按键的次数，如2为双击')
+                    self.balloon.bind(frSend, 'Screenshot Linkage: Press the shortcut key to perform screenshot OCR and copy the result to the clipboard, \n then send the specified keyboard keystrokes \n can be used to linkage to evoke tools such as translator or AHK \n times: the number of times to repeat the sending of the keystrokes, e.g. 2 for a double tap')
                     wid = Widget.hotkeyFrame(
-                        frSend, '截图联动　快捷键　', 'FinishSend', func=self.openLinkageScreenshot, isAutoBind=True)
+                        frSend, 'Screenshot linkage Shortcut', 'FinishSend', func=self.openLinkageScreenshot, isAutoBind=True)
                     wid.grid(column=0, row=0, sticky="nsew")
                     wid = Widget.hotkeyFrame(
-                        frSend, '　 联动发送按键　', 'FinishSend2', isAutoBind=False, isCheckBtn=False)
+                        frSend, 'Linkage send button', 'FinishSend2', isAutoBind=False, isCheckBtn=False)
                     wid.grid(column=0, row=1, sticky="nsew")
                     tk.Entry(frSend, width=2, textvariable=Config.getTK('hotkeyFinishSendNumber')
                             ).grid(column=1, row=1)
-                    tk.Label(frSend, text='次').grid(column=2, row=1)
+                    tk.Label(frSend, text='the second (day, time etc)').grid(column=2, row=1)
 
                 # 切换截图模式
                 def onModeChange():
@@ -539,59 +539,59 @@ class MainWin:
                             if umihk:
                                 Hotkey.add(umihk,  # 添加快捷键监听
                                            lambda *e: self.win.event_generate('<<ScreenshotEvent>>'))
-                    Log.info(f'截图模式改变：{scsMode}')
+                    Log.info(f'Screenshot mode change：{scsMode}')
                 Config.addTrace('scsModeName', onModeChange)
                 onModeChange()
             quickOCR()
 
             # 批量任务设置
-            frameBatch = tk.LabelFrame(self.optFrame, text="批量任务")
+            frameBatch = tk.LabelFrame(self.optFrame, text="batch file")
             frameBatch.pack(side='top', fill='x',
                             ipady=2, pady=LabelFramePadY, padx=4)
 
             def initScheduler():  # 计划任务设置
                 frameScheduler = tk.LabelFrame(
-                    frameBatch, labelanchor='n', text="计划任务")
+                    frameBatch, labelanchor='n', text="Planned tasks")
                 frameScheduler.pack(side='top', fill='x',
                                     ipady=2, pady=LabelFramePadY, padx=4)
 
                 fr1 = tk.Frame(frameScheduler)
                 fr1.pack(side='top', fill='x', pady=2, padx=5)
-                ttk.Checkbutton(fr1, text="完成后打开文件",
+                ttk.Checkbutton(fr1, text="Open the file when finished",
                                 variable=Config.getTK('isOpenOutputFile')).pack(side='left')
-                ttk.Checkbutton(fr1, text="完成后打开目录",
+                ttk.Checkbutton(fr1, text="Open the catalogue when finished",
                                 variable=Config.getTK('isOpenExplorer'),).pack(side='left', padx=15)
 
                 fr2 = tk.Frame(frameScheduler)
                 fr2.pack(side='top', fill='x', pady=2, padx=5)
-                ttk.Checkbutton(fr2, text='本次完成后执行',
+                ttk.Checkbutton(fr2, text='Implemented after this completion',
                                 variable=Config.getTK('isOkMission')).pack(side='left')
                 okMissionDict = Config.get("okMission")
                 okMissionNameList = [i for i in okMissionDict.keys()]
                 wid = ttk.Combobox(fr2, width=14, state="readonly", textvariable=Config.getTK('okMissionName'),
                                    value=okMissionNameList)
                 wid.pack(side='left')
-                self.balloon.bind(wid, '可打开软件配置json文件，添加自己的任务（cmd命令）')
+                self.balloon.bind(wid, 'You can open the software configuration json file and add your own tasks (cmd commands)')
                 if Config.get("okMissionName") not in okMissionNameList:
-                    wid.current(0)  # 初始化Combobox和okMissionName
+                    wid.current(0)  # initialisationCombobox和okMissionName
             initScheduler()
 
             def initInFile():  # 输入设置
                 fInput = tk.LabelFrame(
-                    frameBatch, labelanchor='n', text='图片导入')
+                    frameBatch, labelanchor='n', text='Photograph import')
                 fInput.pack(side='top', fill='x',
                                  ipady=2, pady=LabelFramePadY, padx=4)
                 self.balloon.bind(
-                    fInput, f"允许的图片格式：\n{Config.get('imageSuffix')}")
+                    fInput, f"Allowed Photograph Formats：\n{Config.get('imageSuffix')}")
 
                 fr1 = tk.Frame(fInput)
                 fr1.pack(side='top', fill='x', pady=2, padx=5)
                 wid = ttk.Checkbutton(
-                    fr1, variable=Config.getTK('isRecursiveSearch'), text='递归读取子文件夹中所有图片')
+                    fr1, variable=Config.getTK('isRecursiveSearch'), text='Recursively read all photographs in a subfolder')
                 wid.grid(column=0, row=0, columnspan=2, sticky='w')
                 self.lockWidget.append(wid)
-                if Config.get('isAdvanced'):  # 隐藏高级选项：修改图片许可后缀
-                    tk.Label(fr1, text='图片后缀：　').grid(
+                if Config.get('isAdvanced'):  # 隐藏高级选项：修改photograph许可后缀
+                    tk.Label(fr1, text='Image Suffix:　').grid(
                         column=0, row=2, sticky='w')
                     enInSuffix = tk.Entry(
                         fr1, textvariable=Config.getTK('imageSuffix'))
@@ -603,7 +603,7 @@ class MainWin:
 
             def initOutFile():  # 输出设置
                 fOutput = tk.LabelFrame(
-                    frameBatch, labelanchor='n', text="结果输出")
+                    frameBatch, labelanchor='n', text="Result Output")
                 fOutput.pack(side='top', fill='x',
                                   ipady=2, pady=LabelFramePadY, padx=4)
                 # 输出文件类型勾选
@@ -611,23 +611,23 @@ class MainWin:
                 fr1.pack(side='top', fill='x', pady=2, padx=5)
 
                 wid = ttk.Checkbutton(
-                    fr1, variable=Config.getTK('isOutputTxt'), text='合并.txt文件')
-                self.balloon.bind(wid, f'所有识别文本输出到同一个txt文件')
+                    fr1, variable=Config.getTK('isOutputTxt'), text='merge .txt file')
+                self.balloon.bind(wid, f'All recognised text output to the same txt file')
                 wid.grid(column=0, row=0,  sticky='w')
                 self.lockWidget.append(wid)
                 wid = ttk.Checkbutton(
-                    fr1, variable=Config.getTK('isOutputSeparateTxt'), text='独立.txt文件')
-                self.balloon.bind(wid, f'每张图片的文本输出到同名的单独txt文件')
+                    fr1, variable=Config.getTK('isOutputSeparateTxt'), text='split .txt file')
+                self.balloon.bind(wid, f'The text of each photograph is output to a separate txt file with the same name.')
                 wid.grid(column=2, row=0,  sticky='w')
                 self.lockWidget.append(wid)
                 wid = ttk.Checkbutton(
-                    fr1, variable=Config.getTK('isOutputMD'), text='图文链接.md文件')
-                self.balloon.bind(wid, f'使用Markdown阅读器打开，可同时展示图片和文本')
+                    fr1, variable=Config.getTK('isOutputMD'), text='Graphic links.md file')
+                self.balloon.bind(wid, f'Opened with a Markdown reader to display both photograph and text')
                 wid.grid(column=0, row=1,  sticky='w')
                 self.lockWidget.append(wid)
                 wid = ttk.Checkbutton(
-                    fr1, variable=Config.getTK('isOutputJsonl'), text='原始信息.jsonl文件')
-                self.balloon.bind(wid, f'含所有文件路径和OCR信息，可导入别的程序进一步操作')
+                    fr1, variable=Config.getTK('isOutputJsonl'), text='Raw Info.json file')
+                self.balloon.bind(wid, f'Contains all file paths and OCR information, which can be imported into other programs for further operation.')
                 wid.grid(column=2, row=1,  sticky='w')
                 self.lockWidget.append(wid)
                 tk.Label(fr1, text=' ').grid(column=1, row=0)
@@ -638,29 +638,29 @@ class MainWin:
                         Config.set('isOutputSeparateTxt', False)
                         Config.set('isOutputMD', False)
                         Config.set('isOutputJsonl', False)
-                labelOff = tk.Label(fr1, text='　 关闭全部输出',
+                labelOff = tk.Label(fr1, text='Turn off all outputs',
                                     cursor='hand2', fg='blue')
                 labelOff.grid(column=0, row=2, sticky='w')
                 labelOff.bind('<Button-1>', offAllOutput)  # 绑定关闭全部输出
 
-                wid = ttk.Checkbutton(fr1, text='图片中不含文字时，不输出信息',
+                wid = ttk.Checkbutton(fr1, text='No information is output when there is no text in the photograph.',
                                       variable=Config.getTK('isIgnoreNoText'),)
                 wid.grid(column=0, row=10, columnspan=9, sticky='w')
                 self.lockWidget.append(wid)
 
                 tk.Label(fOutput, fg='gray',
-                         text="下面两项为空时，默认输出到第一张图片所在的文件夹"
+                         text="If the following two items are empty, the default output will be to the folder where the first photograph is located"
                          ).pack(side='top', fill='x', padx=5)
-                # 输出目录
+                # output directory
                 fr2 = tk.Frame(fOutput)
                 fr2.pack(side='top', fill='x', pady=2, padx=5)
-                tk.Label(fr2, text="输出目录：").grid(column=0, row=3, sticky='w')
+                tk.Label(fr2, text="output directory：").grid(column=0, row=3, sticky='w')
                 enOutPath = tk.Entry(
                     fr2, textvariable=Config.getTK('outputFilePath'))
                 enOutPath.grid(column=1, row=3,  sticky='ew')
                 self.lockWidget.append(enOutPath)
                 fr2.grid_rowconfigure(4, minsize=2)  # 第二行拉开间距
-                tk.Label(fr2, text="输出文件名：").grid(column=0, row=5, sticky='w')
+                tk.Label(fr2, text="Output file name：").grid(column=0, row=5, sticky='w')
                 enOutName = tk.Entry(
                     fr2, textvariable=Config.getTK('outputFileName'))
                 enOutName.grid(column=1, row=5, sticky='ew')
@@ -670,18 +670,18 @@ class MainWin:
 
             # 后处理设置
             def initProcess():  # 后处理设置
-                fProcess = tk.LabelFrame(self.optFrame,  text='文本后处理')
+                fProcess = tk.LabelFrame(self.optFrame,  text='Text Post-Processing')
                 fProcess.pack(side='top', fill='x',
                               ipady=2, pady=LabelFramePadY, padx=4)
 
                 fIgnore = tk.Frame(fProcess)
                 fIgnore.pack(side='top', fill='x', pady=2, padx=4)
 
-                self.ignoreBtn = ttk.Button(fIgnore, text='打开忽略区域编辑器（设置排除水印）',
+                self.ignoreBtn = ttk.Button(fIgnore, text='Open the Ignore Region Editor (set to exclude watermarks)',
                                             command=self.openSelectArea)
                 self.ignoreBtn.pack(side='top', fill='x')
                 self.balloon.bind(
-                    self.ignoreBtn, '忽略图片中的指定区域\n可用于批量识别时排除图片水印')
+                    self.ignoreBtn, 'Ignore the specified area in the photograph\n can be used to exclude photographic watermarks during batch identification')
                 self.lockWidget.append(self.ignoreBtn)
                 # 忽略区域本体框架
                 self.ignoreFrame = tk.Frame(fIgnore)  # 不pack，动态添加
@@ -690,7 +690,7 @@ class MainWin:
                                  command=self.openSelectArea)
                 wid.grid(column=1, row=0, sticky='w')
                 self.lockWidget.append(wid)
-                wid = ttk.Button(self.ignoreFrame, text='清空区域',
+                wid = ttk.Button(self.ignoreFrame, text='clear zone',
                                  command=self.clearArea)
                 wid.grid(column=1, row=1, sticky='w')
                 self.lockWidget.append(wid)
@@ -698,7 +698,7 @@ class MainWin:
                     self.ignoreFrame, anchor='w', justify='left')  # 显示生效大小
                 self.ignoreLabel.grid(column=1, row=2, sticky='n')
                 self.balloon.bind(
-                    self.ignoreLabel, '批量任务时，只有分辨率与之相同的图片，才会应用忽略区域。')
+                    self.ignoreLabel, 'When batch tasking, only photographs with the same resolution will have the ignore region applied.')
                 self.ignoreFrame.grid_rowconfigure(2, minsize=10)
                 self.ignoreFrame.grid_columnconfigure(2, minsize=4)
                 self.canvasHeight = 120  # 画板高度不变，宽度根据选区回传数据调整
@@ -711,10 +711,10 @@ class MainWin:
                 fpro.pack(side='top', fill='x', pady=2, padx=4)
                 fpro.grid_columnconfigure(0, weight=1)
                 wid = Widget.comboboxFrame(
-                    fpro, '合并段落：　', 'tbpu', self.lockWidget)
+                    fpro, 'Merge paragraphs: ', 'tbpu', self.lockWidget)
                 wid.grid(column=0, row=0, sticky='ew')
-                self.balloon.bind(wid, '将OCR划分的单行文本合并成整段文字\n点击右侧按钮，浏览方案说明')
-                labelUse = tk.Label(fpro, text='说明', width=5,
+                self.balloon.bind(wid, 'Combine single lines of text divided by OCR into whole paragraphs \n Click the button on the right to view the programme description')
+                labelUse = tk.Label(fpro, text='clarification', width=5,
                                     fg='deeppink', cursor='question_arrow')
                 labelUse.grid(column=1, row=0)
                 labelUse.bind(
@@ -723,49 +723,49 @@ class MainWin:
 
             def initOcrUI():  # OCR引擎设置
                 frameOCR = tk.LabelFrame(
-                    self.optFrame, text="OCR识别引擎设置")
+                    self.optFrame, text="OCR Recognition Engine Settings")
                 frameOCR.pack(side='top', fill='x', ipady=2,
                               pady=LabelFramePadY, padx=4)
                 wid = Widget.comboboxFrame(
-                    frameOCR, '识别语言：　', 'ocrConfig', self.lockWidget)
+                    frameOCR, 'recognition language', 'ocrConfig', self.lockWidget)
                 wid.pack(side='top', fill='x', pady=2, padx=5)
                 self.balloon.bind(
-                    wid, '本软件有整理好的多国语言扩展包，可导入更多语言模型库，\n也可以手动导入PaddleOCR兼容的模型库，\n详情请浏览项目Github主页\n\n竖排模型库（识别语言）建议与竖排合并段落搭配使用')
+                    wid, 'This software has organised multi-language expansion packs to import model libraries in more languages,\n can also manually import PaddleOCR-compatible model libraries,\n for more details, please browse the project Github homepage\n\n Vertical model libraries (recognised languages) are recommended to be used in conjunction with vertically-arranged merged paragraphs')
                 # 压缩
                 fLim = tk.Frame(frameOCR)
                 fLim.pack(side='top', fill='x', pady=2, padx=5)
                 self.balloon.bind(
-                    fLim, '长边压缩模式可以大幅加快识别速度，但可能降低大分辨率图片的识别准确率\n大于4000像素的图片，可将数值改为最大边长的一半。必须为大于零的整数\n默认值： 960\n\n短边扩大模式可能提高小分辨率图片的准确度。一般用不着')
+                    fLim, 'The long side compression mode may significantly speed up recognition, but may reduce the accuracy of recognition for large resolution photographs\nPhotographs larger than 4000 pixels may change the value to half the maximum side length. Must be an integer greater than zero\nDefault value: 960\n\nShort side expansion mode may improve the accuracy of small resolution photographs. Generally not used.')
                 Widget.comboboxFrame(
-                    fLim, '缩放预处理：', 'ocrLimitMode', self.lockWidget, 14).pack(side='left')
-                tk.Label(fLim, text='至').pack(side='left')
+                    fLim, 'Zoom Preprocessing：', 'ocrLimitMode', self.lockWidget, 14).pack(side='left')
+                tk.Label(fLim, text='until').pack(side='left')
                 wid = tk.Entry(
                     fLim, width=9, textvariable=Config.getTK('ocrLimitSize'))
                 wid.pack(side='left')
                 self.lockWidget.append(wid)
-                tk.Label(fLim, text='像素').pack(side='left')
+                tk.Label(fLim, text='pixels').pack(side='left')
                 # 方向
-                wid = ttk.Checkbutton(frameOCR, text='启用方向分类器（文字偏转90度/180度方向矫正）',
+                wid = ttk.Checkbutton(frameOCR, text='Enable orientation classifiers (text deflection 90°/180° orientation correction)',
                                       variable=Config.getTK('isOcrAngle'))
                 wid.pack(side='top', fill='x', pady=2, padx=5)
                 self.balloon.bind(
-                    wid, '当图片中的文字偏转90度或180度时，请打开该选项\n可能略微降低识别速度\n小角度偏转无需启用该选项')
+                    wid, 'Turn on this option when the text in the Photograph is deflected by 90 or 180 degrees \n may slightly slow down the recognition speed \n no need to enable this option for small angle deflection')
                 self.lockWidget.append(wid)
                 # CPU
                 fCpu = tk.Frame(frameOCR, padx=5)
                 fCpu.pack(side='top', fill='x')
-                tk.Label(fCpu, text='线程数：').pack(side='left')
+                tk.Label(fCpu, text='Thread count:').pack(side='left')
                 wid = tk.Entry(
                     fCpu, width=6, textvariable=Config.getTK('ocrCpuThreads'))
                 wid.pack(side='left')
                 self.lockWidget.append(wid)
                 self.balloon.bind(
-                    wid, '最好等于CPU的线程数目。必须为大于零的整数')
-                wid = ttk.Checkbutton(fCpu, text='启用MKLDNN加速',
+                    wid, 'Preferably equal to the number of threads in the CPU. Must be an integer greater than zero')
+                wid = ttk.Checkbutton(fCpu, text='Enable MKLDNN acceleration',
                                       variable=Config.getTK('isOcrMkldnn'))
                 wid.pack(side='left', padx=40)
                 self.balloon.bind(
-                    wid, '大幅加快识别速度。内存占用也会增加')
+                    wid, 'Significantly faster recognition. Memory footprint also increases')
                 self.lockWidget.append(wid)
 
                 # grid
@@ -773,24 +773,24 @@ class MainWin:
                 fr1.pack(side='top', fill='x', padx=5)
                 if Config.get('isAdvanced'):
                     # 隐藏高级选项：额外启动参数
-                    tk.Label(fr1, text='额外启动参数：').grid(
+                    tk.Label(fr1, text='Additional startup parameters：').grid(
                         column=0, row=2, sticky='w')
                     wid = tk.Entry(
                         fr1, textvariable=Config.getTK('argsStr'))
                     wid.grid(column=1, row=2, sticky="nsew")
                     self.balloon.bind(
-                        wid, 'OCR高级参数指令。请遵守PaddleOCR-json要求的格式。详情参考项目主页')
+                        wid, 'OCR advanced parameter commands. Please adhere to the format required by PaddleOCR-json. For details, please refer to the project homepage')
                     self.lockWidget.append(wid)
                     # 隐藏高级选项：引擎管理策略
-                    Widget.comboboxFrame(fr1, '引擎管理策略：', 'ocrRunMode', self.lockWidget
+                    Widget.comboboxFrame(fr1, 'Engine Management Strategy：', 'ocrRunMode', self.lockWidget
                                          ).grid(column=0, row=6, columnspan=2, sticky='we')
                     # 隐藏高级选项：引擎启动超时
                     fInit = tk.Frame(fr1)
                     fInit.grid(column=0, row=7, columnspan=2,
                               sticky='we', pady=2)
                     self.balloon.bind(
-                        fInit, '引擎启动时，超过该时限未完成初始化，判定为启动失败')
-                    tk.Label(fInit, text='初始化超时判定：').pack(side='left')
+                        fInit, 'When the engine is started and the initialisation is not completed after the time limit, it is judged to have failed.')
+                    tk.Label(fInit, text='Initialisation timeout decision：').pack(side='left')
                     tk.Entry(fInit, width=5, 
                              textvariable=Config.getTK('ocrInitTimeout')).pack(side='left')
                     tk.Label(fInit, text='秒').pack(side='left')
@@ -799,30 +799,30 @@ class MainWin:
                     fRam = tk.Frame(fr1)
                     fRam.grid(column=0, row=8, columnspan=2,
                               sticky='we', pady=2)
-                    tk.Label(fRam, text='自动清理内存： 占用超过').pack(side='left')
+                    tk.Label(fRam, text='Automatic memory cleaning： Occupancy over').pack(side='left')
                     wid = tk.Entry(
                         fRam, width=5, textvariable=Config.getTK('ocrRamMaxFootprint'))
                     wid.pack(side='left')
                     self.lockWidget.append(wid)
-                    tk.Label(fRam, text='MB 或 空闲').pack(side='left')
+                    tk.Label(fRam, text='MB or free').pack(side='left')
                     wid = tk.Entry(
                         fRam, width=5, textvariable=Config.getTK('ocrRamMaxTime'))
                     wid.pack(side='left')
                     self.lockWidget.append(wid)
                     tk.Label(fRam, text='秒').pack(side='left')
                     self.balloon.bind(
-                        fRam, '引擎策略为“后台常驻”时生效\n占用内存超过指定值，或指定时间内未有任务执行，则清理一次内存\n频繁清理内存会导致卡顿，影响使用体验\n建议占用不少于 1500 MB，空闲不少于 10 秒\n两个条件独立生效。填0时忽略该条件')
+                        fRam, 'When the engine policy is "background resident", it takes effect \n If the occupied memory exceeds the specified value, or if no task is executed within the specified time, the memory will be cleared once \n Frequent memory clearing will lead to lagging, affecting the user experience \n It is recommended that the occupied memory is not less than 1500 MB, and the idle memory is not less than 10 seconds \n The two conditions take effect independently. Ignore this condition when 0 is entered.')
 
                 frState = tk.Frame(fr1)
                 frState.grid(column=0, row=10, columnspan=2, sticky='nsew')
-                tk.Label(frState, text='引擎当前状态：').pack(
+                tk.Label(frState, text='The current state of the engine:').pack(
                     side='left')
                 tk.Label(frState, textvariable=Config.getTK('ocrProcessStatus')).pack(
                     side='left')
-                labStop = tk.Label(frState, text="停止",
+                labStop = tk.Label(frState, text="cessation",
                                    cursor='hand2', fg="red")
                 labStop.pack(side='right')
-                self.balloon.bind(labStop, '强制停止引擎进程')
+                self.balloon.bind(labStop, 'Forced stopping of engine processes')
                 labStart = tk.Label(frState, text="启动",
                                     cursor='hand2', fg='blue')
                 labStart.pack(side='right', padx=5)
@@ -832,8 +832,8 @@ class MainWin:
                         OCRe.start()
                     except Exception as err:
                         tk.messagebox.showerror(
-                            '遇到了亿点小问题',
-                            f'引擎启动失败：{err}')
+                            'Theres a billion little problems.',
+                            f'Engine startup failure：{err}')
                 labStart.bind(
                     '<Button-1>', lambda *e: engStart())
                 labStop.bind(
@@ -846,7 +846,7 @@ class MainWin:
 
             def initAbout():  # 关于面板
                 frameAbout = tk.LabelFrame(
-                    self.optFrame, text='关于')
+                    self.optFrame, text='with respect to')
                 frameAbout.pack(side='top', fill='x', ipady=2,
                                 pady=LabelFramePadY, padx=4)
                 tk.Label(frameAbout, image=Asset.getImgTK(
@@ -864,28 +864,28 @@ class MainWin:
                 fEX = tk.Frame(self.optFrame)
                 fEX.pack(side='top', fill='x', padx=4)
                 labelOpenFile = tk.Label(
-                    fEX, text='打开设置文件', fg='gray', cursor='hand2')
+                    fEX, text='Open the settings file', fg='gray', cursor='hand2')
                 labelOpenFile.pack(side='left')
                 labelOpenFile.bind(
                     '<Button-1>', lambda *e: os.startfile('Umi-OCR_config.json'))
                 self.balloon.bind(labelOpenFile, 'Umi-OCR_config.json')
-                wid = tk.Checkbutton(fEX, text='调试模式', fg='gray',
+                wid = tk.Checkbutton(fEX, text='debug mode', fg='gray',
                                      variable=Config.getTK('isDebug'))
                 self.balloon.bind(
-                    wid, '调试功能，供开发者使用，立即生效：\nOCR输出额外调试信息 | 内置截图显示调试器')
+                    wid, 'Debugging features for developers with immediate effect: \nOCR outputs additional debugging information | Built-in screenshot display debugger')
                 wid.pack(side='right')
                 # 隐藏高级选项
-                wid = tk.Checkbutton(fEX, text='高级选项', fg='gray',
+                wid = tk.Checkbutton(fEX, text='Advanced Options', fg='gray',
                                      variable=Config.getTK('isAdvanced'))
                 self.balloon.bind(
-                    wid, '启用隐藏的高级选项，重启后生效')
+                    wid, 'Enable hidden advanced options to take effect after reboot')
                 wid.pack(side='right', padx=10)
                 # 若初始时非置顶，不显示提示，则尾部预留出空间
                 if not Config.get('isWindowTop'):
                     tk.Label(self.optFrame).pack(side='top')
             initEX()
 
-            def initOptFrameWH():  # 初始化框架的宽高
+            def initOptFrameWH():  # initialisation框架的宽高
                 self.updateFrameHeight()
                 self.optCanvasWidth = 1  # 宽度则是随窗口大小而改变。
 
@@ -910,29 +910,29 @@ class MainWin:
         flags = Parse(argv)
         if 'error' in flags:
             tk.messagebox.showerror(
-                '遇到了一点小问题', flags['error'])
+                'Had a little problem.', flags['error'])
         # 启动托盘
         if Config.get('isTray'):
             SysTray.start()
             self.win.wm_protocol(  # 注册窗口关闭事件
                 'WM_DELETE_WINDOW', self.onCloseWin)
             # ↑ 所以，当不启动托盘时，窗口的×未关联任何事件，是默认的退出软件。
-            if not flags['hide']:  # 非静默模式
+            if not flags['hide']:  # 非silent mode
                 self.gotoTop()  # 恢复主窗显示
         else:  # 无托盘，强制显示主窗
             self.gotoTop()
-        self.win.after(1, Config.initOK)  # 标记初始化完成
+        self.win.after(1, Config.initOK)  # 标记initialisation完成
         if flags['img'] or flags['clipboard'] or flags['screenshot']:  # 有初始任务
             self.win.after(10, Mission(flags))
-        Notify('欢迎使用 Umi-OCR', '通知弹窗已开启')
+        Notify('Welcome to Umi-OCR', 'Notification popups are enabled!')
         self.win.mainloop()
 
-    # 加载图片 ===============================================
+    # 加载photograph ===============================================
 
-    def draggedImages(self, paths):  # 拖入图片
+    def draggedImages(self, paths):  # 拖入photograph
         if not self.isMsnReady():
             tk.messagebox.showwarning(
-                '任务进行中', '请停止任务后，再拖入图片')
+                'Mission in progress', '请discontinue a mission后，Then drag in the photograph')
             return
         self.notebook.select(self.notebookTab[0])  # 切换到表格选项卡
         pathList = []
@@ -941,22 +941,22 @@ class MainWin:
                             errors='ignore'))
         self.addImagesList(pathList)
 
-    def openFileWin(self):  # 打开选择文件窗
+    def openFileWin(self):  # 打开option文件窗
         if not self.isMsnReady():
             return
         suf = Config.get('imageSuffix')  # 许可后缀
         paths = tk.filedialog.askopenfilenames(
-            title='选择图片', filetypes=[('图片', suf)])
+            title='optionphotograph', filetypes=[('photograph', suf)])
         self.addImagesList(paths)
 
-    def addImagesList(self, paths):  # 添加一批图片列表
+    def addImagesList(self, paths):  # 添加一批photograph列表
         if not self.isMsnReady():
             tk.messagebox.showwarning(
-                '任务进行中', '请停止任务后，再添加图片')
+                'Mission in progress', 'Please discontinue a mission before adding pictures')
             return
         suf = Config.get('imageSuffix').split()  # 许可后缀列表
 
-        def addImage(path):  # 添加一张图片。传入路径，许可后缀。
+        def addImage(path):  # 添加一张photograph。传入路径，许可后缀。
             path = path.replace("/", "\\")  # 浏览是左斜杠，拖入是右斜杠；需要统一
             if suf and os.path.splitext(path)[1].lower() not in suf:
                 return  # 需要判别许可后缀 且 文件后缀不在许可内，不添加。
@@ -968,14 +968,14 @@ class MainWin:
                 s = Image.open(path).size
             except Exception as e:
                 tk.messagebox.showwarning(
-                    "遇到了一点小问题", f"图片载入失败。图片地址：\n{path}\n\n错误信息：\n{e}")
+                    "Ran into a little problem", f"The image failed to load. Image address:\n{path}\n\nerror message：\n{e}")
                 return
             # 计算路径
             p = os.path.abspath(os.path.join(path, os.pardir))  # 父文件夹
-            if not Config.get("outputFilePath"):  # 初始化输出路径
+            if not Config.get("outputFilePath"):  # initialisation输出路径
                 Config.set("outputFilePath", p)
-            if not Config.get("outputFileName"):  # 初始化输出文件名
-                n = f"[转文字]_{os.path.basename(p)}"
+            if not Config.get("outputFileName"):  # initialisation输出文件名
+                n = f"[conversion text]_{os.path.basename(p)}"
                 Config.set("outputFileName", n)
             # 加入待处理列表
             name = os.path.basename(path)  # 带后缀的文件名
@@ -1000,7 +1000,7 @@ class MainWin:
 
     # 忽略区域 ===============================================
 
-    def openSelectArea(self):  # 打开选择区域
+    def openSelectArea(self):  # 打开option区域
         if not self.isMsnReady() or not self.win.attributes('-disabled') == 0:
             return
         defaultPath = ""
@@ -1009,7 +1009,7 @@ class MainWin:
         self.win.attributes("-disabled", 1)  # 禁用父窗口
         IgnoreAreaWin(self.closeSelectArea, defaultPath)
 
-    def closeSelectArea(self):  # 关闭选择区域，获取选择区域数据
+    def closeSelectArea(self):  # 关闭option区域，获取option区域数据
         self.win.attributes("-disabled", 0)  # 启用父窗口
         area = Config.get("ignoreArea")
         if not area:
@@ -1017,7 +1017,7 @@ class MainWin:
             self.ignoreBtn.pack(side='top', fill='x')  # 显示按钮
             self.updateFrameHeight()  # 刷新框架
             return
-        self.ignoreLabel["text"] = f"生效分辨率：\n宽 {area['size'][0]}\n高 {area['size'][1]}"
+        self.ignoreLabel["text"] = f"effective resolution：\n宽 {area['size'][0]}\n高 {area['size'][1]}"
         self.canvas.delete(tk.ALL)  # 清除画布
         scale = self.canvasHeight / area['size'][1]  # 显示缩放比例
         width = round(self.canvasHeight * (area['size'][0] / area['size'][1]))
@@ -1049,7 +1049,7 @@ class MainWin:
             return
         self.progressbar["value"] = 0
         Config.set('tipsTop1', '')
-        Config.set('tipsTop2', '请导入文件')
+        Config.set('tipsTop2', 'Please import the file')
         Config.set("outputFilePath", "")
         Config.set("outputFileName", "")
         self.batList.clear()
@@ -1057,7 +1057,7 @@ class MainWin:
         for i in chi:
             self.table.delete(i)  # 表格组件移除
 
-    def delImgList(self):  # 图片列表中删除选中
+    def delImgList(self):  # photograph列表中删除选中
         if not self.isMsnReady():
             return
         chi = self.table.selection()
@@ -1115,11 +1115,11 @@ class MainWin:
 
     def gotoTop(self, isForce=False):  # 主窗置顶
         flag = Config.get('WindowTopMode')
-        # 模式：静默模式
+        # 模式：silent mode
         if flag == WindowTopModeFlag.never and not isForce and Config.get('isTray'):
             self.win.attributes('-topmost', 0)
             return
-        # 模式：自动弹出，或不满足静默模式要求
+        # 模式：pop-up automatically，或不满足silent mode要求
         if self.win.state() == 'iconic':  # 窗口最小化状态下
             self.win.state('normal')  # 恢复前台状态
         self.win.attributes('-topmost', 1)  # 设置层级最前
@@ -1139,16 +1139,16 @@ class MainWin:
     def setRunning(self, batFlag):  # 设置运行状态。
 
         def setNone():
-            self.btnRun['text'] = '开始任务'
+            self.btnRun['text'] = 'Commencement of mission'
             self.btnRun['state'] = 'normal'
-            Config.set('tipsTop2', '已结束')
+            Config.set('tipsTop2', 'Closed')
             return 'normal'
 
         def initing():
-            self.btnRun['text'] = '停止任务'
+            self.btnRun['text'] = 'discontinue a mission'
             self.btnRun['state'] = 'normal'
             Config.set('tipsTop1', '')
-            Config.set('tipsTop2', '初始化')
+            Config.set('tipsTop2', 'initialisation')
             self.progressbar["maximum"] = 50  # 重置进度条长度，值越小加载动画越快
             self.progressbar['mode'] = 'indeterminate'  # 进度条为来回动模式
             self.progressbar.start()  # 进度条开始加载动画
@@ -1160,7 +1160,7 @@ class MainWin:
             return ''
 
         def stopping():
-            self.btnRun['text'] = '正在停止'
+            self.btnRun['text'] = 'in the process of stopping'
             self.btnRun['state'] = 'disable'
             if str(self.progressbar["mode"]) == 'indeterminate':
                 self.progressbar.stop()  # 进度条停止加载动画
@@ -1188,24 +1188,24 @@ class MainWin:
         if self.isMsnReady():  # 未在运行
             if self.batList.isEmpty():
                 return
-            # 初始化批量识图任务处理器
+            # initialisation批量识图任务处理器
             try:
                 msnBat = MsnBatch()
             except Exception as err:
-                tk.messagebox.showwarning('遇到了亿点小问题', f'{err}')
+                tk.messagebox.showwarning('Theres a billion little problems.', f'{err}')
                 return  # 未开始运行，终止本次运行
             # 开始运行
             paths = self.batList.getItemValueList('path')
             OCRe.runMission(paths, msnBat)
-        # 允许任务进行中或初始化的中途停止任务
+        # 允许任务进行中或initialisation的中途discontinue a mission
         elif OCRe.msnFlag == MsnFlag.running or OCRe.msnFlag == MsnFlag.initing:
             OCRe.stopByMode()
 
     def startSingleClipboard(self):  # 开始单张识别的剪贴板任务
-        try:  # 初始化快捷识图任务处理器
+        try:  # initialisationfast map recognition任务处理器
             msnQui = MsnQuick()
         except Exception as err:
-            tk.messagebox.showwarning('遇到了亿点小问题', f'{err}')
+            tk.messagebox.showwarning('Theres a billion little problems.', f'{err}')
             return  # 未开始运行，终止本次运行
         # 开始运行
         OCRe.runMission(['clipboard'], msnQui)
@@ -1238,14 +1238,14 @@ class MainWin:
                 self.gotoTop()  # 主窗置顶
                 self.clearTable()  # 清空主表
                 self.addImagesList(clipData)  # 添加到主表
-                self.run()  # 开始任务任务
+                self.run()  # Commencement of mission任务
             else:
                 failFlag = True
         else:  # 剪贴板中不是支持的格式
             failFlag = True
 
         if failFlag:
-            self.errorOutput('剪贴板中未查询到图片信息')
+            self.errorOutput('Picture information not queried in clipboard')
             # 失败也置顶
             self.gotoTop()  # 主窗置顶
             self.notebook.select(self.notebookTab[1])  # 转到输出卡
@@ -1272,7 +1272,7 @@ class MainWin:
     def closeScreenshot(self, flag, errMsg=None):  # 关闭截图窗口，返回T表示已复制到剪贴板
         self.win.attributes("-disabled", 0)  # 启用父窗口
         if errMsg:
-            self.errorOutput('截图失败', errMsg)
+            self.errorOutput('Screenshot Failure', errMsg)
         if not flag and self.win.state() == 'normal':  # 截图不成功，但窗口非最小化
             self.gotoTop()  # 主窗置顶
         elif flag:  # 成功
@@ -1290,14 +1290,14 @@ class MainWin:
         if OCRe.engFlag == EngFlag.none and OCRe.msnFlag == MsnFlag.none:  # 未在运行
             self.exit()
         else:
-            self.win.after(50, self.waitClose)  # 等待关闭，50ms轮询一次是否已结束子线程
+            self.win.after(50, self.waitClose)  # 等待关闭，50ms轮询一次是否Closed子线程
 
     def waitClose(self):  # 等待线程关闭后销毁窗口
-        Log.info(f'关闭中，等待 {OCRe.engFlag} | {OCRe.msnFlag}')
+        Log.info(f'Closed. Waiting. {OCRe.engFlag} | {OCRe.msnFlag}')
         if OCRe.engFlag == EngFlag.none and OCRe.msnFlag == MsnFlag.none:  # 未在运行
             self.exit()
         else:
-            self.win.after(50, self.waitClose)  # 等待关闭，50ms轮询一次是否已结束子进程
+            self.win.after(50, self.waitClose)  # 等待关闭，50ms轮询一次是否Closed子进程
 
     def exit(self):
         SysTray.stop()  # 关闭托盘。这个函数里有判断，不会造成无限递归。
@@ -1308,12 +1308,12 @@ class MainWin:
     def showTips(self, tipsText):  # 显示提示
         if not self.isMsnReady():
             tk.messagebox.showwarning(
-                '任务进行中', '请停止任务后，再打开软件说明')
+                'Task in progress', 'Please stop the task before opening the software Description')
             return
         self.notebook.select(self.notebookTab[1])  # 切换到输出选项卡
         outputNow = self.textOutput.get("1.0", tk.END)
         if outputNow and not outputNow == "\n":  # 输出面板内容存在，且不是单换行（初始状态）
-            if not tkinter.messagebox.askokcancel('提示', '将清空输出面板。要继续吗？'):
+            if not tkinter.messagebox.askokcancel('The prompt ', ' will clear the output panel. Want to continue?'):
                 return
             self.panelClear()
         self.textOutput.insert(tk.END, tipsText)

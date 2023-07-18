@@ -71,7 +71,7 @@ _ConfigDict = {
         'isTK': True,
     },
     'isTray': {  # T时展示托盘图标
-        'default': True,
+        'default': False,
         'isSave': True,
         'isTK': True,
     },
@@ -100,7 +100,7 @@ _ConfigDict = {
         'isTK': True,
     },
     'textpanelFontSize': {  # 主输出面板字体大小
-        'default': 14,
+        'default': 11,
         'isSave': True,
         'isTK': True,
     },
@@ -281,10 +281,10 @@ _ConfigDict = {
     },
     'okMission': {  # 计划任务事件，code为cmd代码
         'default': {
-            '关机':  # 取消：shutdown /a
-            {'code': r'msg %username% /time:25 "Umi-OCR任务完成，将在30s后关机" & echo 关闭本窗口可取消关机 & choice /t 30 /d y /n >nul & shutdown /f /s /t 0'},
-            '休眠':  # 用choice实现延时
-            {'code': r'msg %username% /time:25 "Umi-OCR任务完成，将在30s后休眠" & echo 关闭本窗口可取消休眠 & choice /t 30 /d y /n >nul & shutdown /f /h'},
+            'turn off':  # 取消：shutdown /a
+            {'code': r'msg %username% /time:25 "Umi-OCR task is completed and will switch off after 30s" & echo 关闭本窗口可取消关机 & choice /t 30 /d y /n >nul & shutdown /f /s /t 0'},
+            'sleep':  # 用choice实现延时
+            {'code': r'msg %username% /time:25 "Umi-OCR task completed, will hibernate after 30s" & echo 关闭本窗口可取消休眠 & choice /t 30 /d y /n >nul & shutdown /f /h'},
         },
         'isSave': True,
         'isTK': False,
@@ -363,14 +363,14 @@ _ConfigDict = {
     },
     'ocrRunMode': {  # 进程管理策略
         'default': {
-            '后台常驻（大幅加快任务启动速度）': RunModeFlag.long,
-            '按需关闭（减少空闲时内存占用）': RunModeFlag.short,
+            'Background resident (dramatically speeds up task startup) ': RunModeFlag.long,
+            'On-demand shutdown (reduces memory footprint at idle)': RunModeFlag.short,
         },
         'isSave': False,
         'isTK': False,
     },
     'ocrProcessStatus': {  # 进程运行状态字符串，由引擎单例传到tk窗口
-        'default': '未启动',
+        'default': 'inactive',
         'isSave': False,
         'isTK': True,
     },
@@ -379,9 +379,9 @@ _ConfigDict = {
         'isSave': True,
         'isTK': True,
     },
-    'ocrConfig': {  # 配置文件信息
-        'default': {  # 配置文件信息
-            '简体中文': {
+    'ocrConfig': {  # Configuration file information
+        'default': {  # Configuration file information
+            'simplified Chinese': {
                 'path': 'PaddleOCR_json_config_ch.txt'
             }
         },
@@ -403,7 +403,7 @@ _ConfigDict = {
         'isSave': True,
         'isTK': True,
     },
-    'isOcrMkldnn': {  # 启用mkldnn加速
+    'isOcrMkldnn': {  # Enable mkldnn acceleration
         'default': True,
         'isSave': True,
         'isTK': True,
@@ -415,8 +415,8 @@ _ConfigDict = {
     },
     'ocrLimitMode': {  # 压缩限制模式
         'default': {
-            '长边压缩模式': 'max',
-            '短边扩大模式': 'min',
+            'Long-edge compression mode': 'max',
+            'short-edge expanding mode': 'min',
         },
         'isSave': False,
         'isTK': False,
@@ -492,25 +492,25 @@ _ConfigDict = {
         'isTK': True,
     },
     'tipsTop2': {  # 主窗口顶部进度条上方的label，右侧
-        'default': '拖入图片或快捷截图',
+        'default': 'Drag in an image or take a quick screenshot',
         'isTK': True,
     },
 }
 
 
 class ConfigModule:
-    # ↓ 在这些编码下能使用全部功能，其它编码不保证能使用如拖入含中文路径的图片等功能。
-    # ↓ 但识图功能是可以正常使用的。
+    # ↓ In these encodings can use all functions, other encodings are not guaranteed to work, such as dragging in pictures with Chinese paths.
+    # ↓ But the map function works fine.
     __sysEncodingSafe = ['cp936', 'cp65001']
 
-    __tkSaveTime = 200  # tk变量改变多长时间后写入本地。毫秒
+    __tkSaveTime = 200  # How long after the tk variable changes is written locally. Milliseconds
 
-    _initFlag = False  # 标记程序初始化完成，可以正常接客
+    _initFlag = False  # Marking the initialisation of the program as complete and ready to pick up passengers as normal
 
-    # ==================== 初始化 ====================
+    # ==================== initialisation ====================
 
     def __init__(self):
-        self.main = None  # win_main的self，可用来获取主it刷新界面或创建计时器
+        self.main = None  # The self of win_main can be used to get the main it to refresh the interface or create a timer.
         self.sysEncoding = 'ascii'  # 系统编码。初始化时获取
         self.__saveTimer = None  # 计时器，用来更新tk变量一段时间后写入本地
         self.__optDict = {}  # 配置项的数据
@@ -560,7 +560,7 @@ class ConfigModule:
             elif isinstance(self.__optDict[key], int):
                 self.__tkDict[key] = tk.IntVar()
             else:  # 给开发者提醒
-                raise Exception(f'配置项{key}要生成tk变量，但类型不合法！')
+                raise Exception(f'The configuration item {key} is to generate a tk variable, but the type is not legal!')
             # 赋予初值
             self.__tkDict[key].set(self.__optDict[key])
             # 跟踪值改变事件
@@ -587,8 +587,8 @@ class ConfigModule:
                         self.set(key, jsonData[key])
         except json.JSONDecodeError:  # 反序列化json错误
             if tk.messagebox.askyesno(
-                '遇到了一点小问题',
-                    f'配置文件 {ConfigJsonFile} 格式错误。\n\n【是】 重置该文件\n【否】 退出本次运行'):
+                'Had a little problem.',
+                    f'Configuration file {ConfigJsonFile} is in the wrong format. \n\n [Yes] Reset the file \n [No] Exit this run'):
                 self.save()
             else:
                 os._exit(0)
@@ -596,8 +596,8 @@ class ConfigModule:
             # 当成是首次启动软件，提示
             if self.sysEncoding not in self.__sysEncodingSafe:  # 不安全的地区
                 tk.messagebox.showwarning(
-                    '警告',
-                    f'您的系统地区语言编码为[{self.sysEncoding}]，可能导致拖入图片的功能异常，建议使用浏览按钮导入图片。其它功能不受影响。')
+                    'warnings',
+                    f'Your system locale encoding of [{self.sysEncoding}] may cause the function of dragging in images to be abnormal, so it is recommended to use the browse button to import images. Other functions are not affected.')
             self.save()
 
     def checkMultiOpen(self):
@@ -616,12 +616,12 @@ class ConfigModule:
             if psutil.pid_exists(lastPID):  # 上次记录的pid如今存在
                 runningKey = getProcessKey(lastPID)
                 if lastKey == runningKey:  # 上次记录的key与它pid当前key对应，则证实多开
-                    Log.info(f'检查到进程已在运行。pid：{lastPID}，key：{lastKey}')
+                    Log.info(f'Check that the process is already running. pid：{lastPID}，key：{lastKey}')
                     if tk.messagebox.askyesno(
-                        '提示',
-                            f'Umi-OCR 已在运行。\n\n【是】 退出本次运行\n【否】 多开软件'):
+                        'draw attention to sth.',
+                            f'Umi-OCR is already running. \n\n [Yes] Exit this run \n [No] Multi-open software'):
                         os._exit(0)
-                    else:  # 忽视警告继续多开，不记录当前信息
+                    else:  # 忽视warnings继续多开，不记录当前信息
                         return
             # 本次为唯一的进程，记录当前进程信息
             nowPid = os.getpid()
@@ -641,8 +641,8 @@ class ConfigModule:
                 fp.write(json.dumps(saveDict, indent=4, ensure_ascii=False))
         except Exception as e:
             tk.messagebox.showerror(
-                '警告',
-                f'无法保存配置文件，请检查是否有足够的权限。\n{e}')
+                'warnings',
+                f'Cannot save configuration file, please check if you have enough permissions\n{e}')
 
     # ==================== 操作变量 ====================
 
@@ -651,12 +651,12 @@ class ConfigModule:
         try:
             self.__optDict[key] = self.__tkDict[key].get()
         except Exception as err:
-            Log.error(f'设置项{key}刷新失败：\n{err}')
+            Log.error(f'Failed to refresh set item {key}.：\n{err}')
         if key in self.__traceDict:
             try:
                 self.__traceDict[key]()
             except Exception as err:
-                Log.error(f'设置项{key}跟踪事件调用失败：\n{err}')
+                Log.error(f'Setting item {key} tracking event call failure：\n{err}')
 
     def get(self, key):
         '''获取一个配置项的值'''

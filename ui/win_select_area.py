@@ -25,14 +25,14 @@ class IgnoreAreaWin:
         # 主窗口
         self.win = tk.Toplevel()
         self.win.protocol("WM_DELETE_WINDOW", self.onClose)
-        self.win.title("选择区域")
+        self.win.title("Select area")
         self.win.resizable(False, False)  # 禁止窗口拉伸
         # 变量初始化
         self.imgSize = (-1, -1)  # 图像尺寸，初次加载时生效。
         self.imgScale = -1  # 图片缩放比例
-        self.imgSizeText = tk.StringVar(value="未设定")
+        self.imgSizeText = tk.StringVar(value="not configured")
         self.area = [[], [], []]  # 存储各个矩形区域的列表
-        self.areaHistory = []  # 绘图历史，撤销用
+        self.areaHistory = []  # 绘图历史，Undo用
         self.areaTextRec = []  # 文字区域提示框
         self.areaType = -1  # 当前绘图模式
         self.areaTypeIndex = [-1, -1, -1]  # 当前绘制的矩形的序号
@@ -47,9 +47,9 @@ class IgnoreAreaWin:
         ctrlFrame.pack(side='top', fill='y')
         ctrlF0 = tk.Frame(ctrlFrame)
         ctrlF0.pack(side='left')
-        tk.Label(ctrlF0, text="【图像分辨率】").pack()
+        tk.Label(ctrlF0, text="【image resolution】").pack()
         tk.Label(ctrlF0, textvariable=self.imgSizeText).pack()
-        tk.Label(ctrlF0, text="不符合该分辨率的图片\n忽略区域设置不会生效",
+        tk.Label(ctrlF0, text="Images that do not match this resolution \n ignore region setting will not take effect",
                  fg='gray', wraplength=120).pack()
         tk.Frame(ctrlFrame, w=22).pack(side='left')
         # 复选框
@@ -58,15 +58,15 @@ class IgnoreAreaWin:
         self.isAutoOCR = tk.BooleanVar()
         self.isAutoOCR.set(True)
         wid = ttk.Checkbutton(
-            ctrlF1, variable=self.isAutoOCR, text='启用 OCR结果预览')
+            ctrlF1, variable=self.isAutoOCR, text='Enable OCR result previe')
         wid.grid(column=0, row=0, sticky='w')
-        self.balloon.bind(wid, '以虚线框标出OCR识别到的文本块')
+        self.balloon.bind(wid, 'The dotted box marks the block of text recognised by the OCR.')
         wid = ttk.Checkbutton(
-            ctrlF1, variable=Config.getTK('isAreaWinAutoTbpu'), text='启用 文块后处理预览')
+            ctrlF1, variable=Config.getTK('isAreaWinAutoTbpu'), text='Enable block post-processing preview')
         Config.addTrace('isAreaWinAutoTbpu', self.reLoadImage)
         wid.grid(column=0, row=1, sticky='w')
         self.balloon.bind(
-            wid, '以虚线框标出经过文本块后处理的块\n注意，仅用于预览后处理效果，\n实际任务时忽略区域早于后处理执行，不受后处理的影响')
+            wid, 'Marked with a dotted box after the text block post-processing block \n note, only for previewing the effect of post-processing, \n the actual task when ignoring the region earlier than the post-processing execution, not affected by post-processing')
         Widget.comboboxFrame(ctrlF1, '', 'tbpu', width=18).grid(
             column=0, row=2, sticky='w')
         # 切换画笔按钮
@@ -75,40 +75,40 @@ class IgnoreAreaWin:
         ctrlF2.pack(side='left')
         self.buttons = [None, None, None]
         btnW = 15
-        self.buttons[0] = tk.Button(ctrlF2, text='+忽略区域 A', width=btnW, height=3, fg=self.areaColor[0], bg=self.areaColor[3],
+        self.buttons[0] = tk.Button(ctrlF2, text='+ignore region A', width=btnW, height=3, fg=self.areaColor[0], bg=self.areaColor[3],
                                     command=lambda: self.changeMode(0))
         self.buttons[0].pack(side='left', padx=5)
         self.balloon.bind(
-            self.buttons[0], '处于 [忽略区域 A] 内的矩形虚线文字块将被忽略\n一般情况下，将需要去除的水印区域全部画上区域A即可')
+            self.buttons[0], 'Rectangular dashed text blocks within [ignore region A] will be ignored \n general, it is sufficient to draw all the watermarked areas that need to be removed onto region A')
         tk.Frame(ctrlFrame, w=20).pack(side='left')
-        self.buttons[1] = tk.Button(ctrlF2, text='+识别区域', width=btnW, height=3, fg=self.areaColor[1], bg=self.areaColor[3],
+        self.buttons[1] = tk.Button(ctrlF2, text='+region of identification', width=btnW, height=3, fg=self.areaColor[1], bg=self.areaColor[3],
                                     command=lambda: self.changeMode(1))
         self.buttons[1].pack(side='left', padx=5)
         self.balloon.bind(
-            self.buttons[1], '若 [识别区域] 内存在文字块，则 [忽略区域 A] 失效')
+            self.buttons[1], 'If there is a block of text in [region of identification], [ignore region A] is disabled.')
         tk.Frame(ctrlFrame, w=20).pack(side='left')
-        self.buttons[2] = tk.Button(ctrlF2, text='+忽略区域 B', width=btnW, height=3, fg=self.areaColor[2], bg=self.areaColor[3],
+        self.buttons[2] = tk.Button(ctrlF2, text='+ignore region B', width=btnW, height=3, fg=self.areaColor[2], bg=self.areaColor[3],
                                     command=lambda: self.changeMode(2))
         self.buttons[2].pack(side='left', padx=5)
         self.balloon.bind(
-            self.buttons[2], '当 [忽略区域 A] 失效，即触发 [识别区域] 时，\n[忽略区域 B] 生效')
+            self.buttons[2], 'When [Ignore Area A] is disabled, i.e. [Recognise Area] is triggered, \n [Ignore Area B] is in effect.')
 
         tk.Frame(ctrlFrame, w=20).pack(side='left')
         ctrlF4 = tk.Frame(ctrlFrame)
         ctrlF4.pack(side='left')
-        tk.Button(ctrlF4, text='清空', width=12, bg='white',
+        tk.Button(ctrlF4, text='clear', width=12, bg='white',
                   command=self.clearCanvas).pack()
-        tk.Button(ctrlF4, text='撤销\nCtrl+Shift+Z', width=12, bg='white',
+        tk.Button(ctrlF4, text='Undo\nCtrl+Shift+Z', width=12, bg='white',
                   command=self.revokeCanvas).pack(pady=5)
-        self.win.bind("<Control-Z>", self.revokeCanvas)  # 绑定撤销组合键，带shift
+        self.win.bind("<Control-Z>", self.revokeCanvas)  # 绑定Undo组合键，带shift
         tk.Frame(ctrlFrame, w=10).pack(side='left')
-        tk.Button(ctrlFrame, text='完成', width=8, bg='white',
+        tk.Button(ctrlFrame, text='Run', width=8, bg='white',
                   command=lambda: self.onClose(False)).pack(side="left", fill="y")
         tipsFrame = tk.Frame(self.win)
         tipsFrame.pack()
-        tk.Label(tipsFrame, text="↓ ↓ ↓ 将任意图片拖入下方预览。然后点击按钮切换画笔，在图片上按住左键框选出想要的区域。",
+        tk.Label(tipsFrame, text="↓ ↓ ↓ Drag any image into the preview below. Then click the button to switch brushes and hold down the left button on the image to frame the desired area.",
                  fg='gray').pack(side='left')
-        tk.Label(tipsFrame, text="同一种区域可绘制多个方框。", fg='blue').pack(side='left')
+        tk.Label(tipsFrame, text="Multiple boxes can be drawn for the same type of area.", fg='blue').pack(side='left')
         tk.Label(tipsFrame, text="↓ ↓ ↓", fg='gray').pack(side='left')
         # initPanel()
 
@@ -124,13 +124,13 @@ class IgnoreAreaWin:
 
         def initOCR():  # 初始化识别器
             canvasText = self.canvas.create_text(self.cW/2, self.cH/2, font=('', 15, 'bold'), fill='white', anchor="c",
-                                                 text=f'引擎启动中，请稍候……')
+                                                 text=f'The engine is starting, please wait ......')
             try:
                 OCRe.start()  # 启动或刷新引擎
             except Exception as e:
                 tk.messagebox.showerror(
-                    '遇到了亿点小问题',
-                    f'识别器初始化失败：{e}\n\n请检查配置有无问题！')
+                    'There are a billion little problems.',
+                    f'Identifier initialisation failed: {e}\n\n Please check the configuration for any problems!')
                 self.win.attributes('-topmost', 1)  # 设置层级最前
                 self.win.attributes('-topmost', 0)  # 然后立刻解除
                 self.isAutoOCR.set(False)  # 关闭自动分析
@@ -162,7 +162,7 @@ class IgnoreAreaWin:
 
         if self.area[0] or self.area[1] or self.area[2]:  # 数据存在
             if isAsk:  # 需要问
-                if tk.messagebox.askokcancel('关闭窗口', '要应用选区吗？'):  # 需要应用
+                if tk.messagebox.askokcancel('Close window', 'Want to apply a selection?'):  # 需要应用
                     Config.set("ignoreArea", getData())
             else:  # 不需要问
                 Config.set("ignoreArea", getData())
@@ -185,7 +185,7 @@ class IgnoreAreaWin:
             img = Image.open(path)
         except Exception as e:
             tk.messagebox.showwarning(
-                "遇到了一点小问题", f"图片载入失败。图片地址：\n{path}\n\n错误信息：\n{e}")
+                "Ran into a little problem ", f"The image failed to load. Image address:\n{path}\n\nError message:\n{e}")
             self.win.attributes('-topmost', 1)  # 设置层级最前
             self.win.attributes('-topmost', 0)  # 然后立刻解除
             return
@@ -203,8 +203,9 @@ class IgnoreAreaWin:
                 self.imgScale = sw
             self.imgSizeText.set(f'{self.imgSize[0]}x{self.imgSize[1]}')
         elif not self.imgSize == img.size:  # 尺寸不符合
-            tk.messagebox.showwarning("图片尺寸错误！",
-                                      f"当前图像尺寸限制为{self.imgSize[0]}x{self.imgSize[1]}，不允许加载{img.size[0]}x{img.size[1]}的图片。\n若要解除限制、更改为其他分辨率，请点击“清空”后重新拖入图片。")
+            tk.messagebox.showwarning("The image is the wrong size",
+                                      f"The current image size is limited to {self.imgSize[0]}x{self.imgSize[1]} , and it is not allowed to load images with {img.size[0]}x{img.size[1]} \nTo remove the restriction and change the resolution to another one, click ""clear"" and drag the image again." )
+                                    #   f"当前图像尺寸限制为{self.imgSize[0]}x{self.imgSize[1]}，不允许加载{img.size[0]}x{img.size[1]}的图片。\n若要解除限制、更改为其他分辨率，请点击“clear”后重新拖入图片。")
             self.win.attributes('-topmost', 1)  # 设置层级最前
             self.win.attributes('-topmost', 0)  # 然后立刻解除
             return
@@ -213,11 +214,11 @@ class IgnoreAreaWin:
         # OCR识别
         def runOCR():
             # 任务前：显示提示信息
-            self.win.title(f"分析中…………")  # 改变标题
+            self.win.title(f"Under analysis ............")  # 改变标题
             pathStr = path if len(
                 path) <= 50 else path[:50]+"……"  # 路径太长显示不全，截取
             canvasText = self.canvas.create_text(self.cW/2, self.cH/2, font=('', 15, 'bold'), fill='white', anchor="c",
-                                                 text=f'图片分析中，请稍候……\n\n\n\n{pathStr}')
+                                                 text=f'Picture analysis in progress, please wait ......\n\n\n\n{pathStr}')
             self.win.update()  # 刷新窗口
             # 开始识别，耗时长
             data = OCRe.run(path)
@@ -250,16 +251,16 @@ class IgnoreAreaWin:
             elif not data["code"] == 101:  # 发生异常
                 self.isAutoOCR.set(False)  # 关闭自动分析
                 tk.messagebox.showwarning(
-                    "遇到了一点小问题", f"图片分析失败。图片地址：\n{path}\n\n错误码：{str(data['code'])}\n\n错误信息：\n{str(data['data'])}")
+                    "Ran into a little problem", f"Image analysis failed. Image address:\n{path}\n\nError Code:{str(data['code'])}\n\nError message:\n{str(data['data'])}")
                 self.win.attributes('-topmost', 1)  # 设置层级最前
                 self.win.attributes('-topmost', 0)  # 然后立刻解除
         if self.isAutoOCR.get():
             try:
                 runOCR()
             except Exception as e:
-                tk.messagebox.showerror('遇到了一点小问题', f'预览OCR失败：\n{e}')
+                tk.messagebox.showerror('Had a little problem.', f'Preview OCR failed:\n{e}')
                 return
-        self.win.title(f"选择区域 {path}")  # 改变标题
+        self.win.title(f"Select area {path}")  # 改变标题
         # 缓存图片并显示
         img = img.resize(self.imgReSize, Image.ANTIALIAS)  # 改变图片大小
         self.imgFile = ImageTk.PhotoImage(img)  # 缓存图片
@@ -301,7 +302,7 @@ class IgnoreAreaWin:
             b["state"] = tk.NORMAL  # 启用所有按钮
             b["bg"] = self.areaColor[3]
 
-    def revokeCanvas(self, e=None):  # 撤销一步
+    def revokeCanvas(self, e=None):  # Undo一步
         if len(self.areaHistory) == 0:
             return
         self.canvas.delete(self.areaHistory[-1]["id"])  # 删除历史记录中最后绘制的矩形

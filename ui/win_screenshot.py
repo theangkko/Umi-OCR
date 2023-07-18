@@ -18,26 +18,26 @@ from PIL import ImageGrab, ImageTk
 from enum import Enum
 
 # TODO :
-# 截图模块的工作原理是：先获取虚拟屏幕（所有显示器的画面拼凑在一起）的完整截图。然后创建一块画布，
-# 画布的起点(左上角)是虚拟屏幕的左上角(xy可能为负值)，画布的宽高是虚拟屏幕的宽高，
-# 然后在画布上显示完整截图，监听用户按下与拖拽。此时画布上显示的截图的位置应与真实屏幕画面一一对应。
-# 但问题是，画布作为一个窗口，自身有一个缩放比例（即它出生的那块屏幕的缩放比）。
-# 若多屏幕的其中某块屏幕的缩放比与画布的缩放比不一致，在一定排列下，它们的逻辑坐标会错位，表现为画面错位。
-# 我原本希望通过获取全部屏幕的物理分辨率和逻辑分辨率，得到各自的缩放比，进而计算出画布坐标系下的“真实”逻辑坐标。
-# 但是，我没能摸清规律。参数与太多因素相关，
-# 屏幕的排列方式、软件点开时的状态、画布创建时的位置……都可能影响逻辑坐标和逻辑分辨率，
-# 使得很难计算画布坐标系下应该对屏幕矫正的锚点和比例。
+# The screenshot module works by first getting a complete screenshot of the virtual screen (all the monitors' frames put together). Then create a canvas that
+# The starting point of the canvas (top-left corner) is the top-left corner of the virtual screen (xy may be negative), the width of the canvas is the width of the virtual screen, # and then display the full screenshot on the canvas.
+# Then display the full screenshot on the canvas, listening for user presses and drags. The position of the screenshot on the canvas should correspond to the real screen.
+# But the problem is that the canvas, as a window, has a scaling of its own (i.e. the scaling of the screen it was born on).
+# If the scaling ratio of one of the multiple screens does not match the scaling ratio of the canvas, their logical coordinates will be misaligned under a certain alignment, which is manifested as a misaligned screen.
+# I was hoping to get the physical and logical resolutions of all the screens, get their scaling ratios, and then calculate the "true" logical coordinates in the canvas coordinate system.
+# But I couldn't figure it out. There are too many factors involved.
+# The way the screen is arranged, the state of the software when you click on it, the position of the canvas when it is created ...... can all affect the logical coordinates and the logical resolution, # making it very difficult to calculate the logical coordinates of the canvas.
+# making it difficult to calculate the anchor points and ratios that should be corrected for the screen in the canvas coordinate system.
 
 Log = GetLog()
 
 
 def _ScreenshotClose(flag, errMsg=None):
-    Log.info('截图结束')
+    Log.info('End of Screenshot')
     Config.main.closeScreenshot(flag, errMsg)
 
 
 def ScreenshotCopy():
-    '''截屏，保存到剪贴板，然后调用主窗的closeScreenshot接口'''
+    '''Take a screenshot, save it to the clipboard, and then call the main window's close Screenshot interface.'''
     NotifyClose()  # 关闭通知弹窗
     scsMode = Config.get('scsMode').get(Config.get(
         'scsModeName'), ScsModeFlag.multi)  # 当前截屏模式
@@ -67,7 +67,7 @@ class ScreenshotSys():  # 系统截图模式
             self.__initKey()
         if not Hotkey.isPressed('win'):  # 不是通过快捷键进入
             Hotkey.send('win+shift+s')  # 发送系统截图快捷键
-        Log.info('系统截图启动')
+        Log.info('System Screenshot Launch')
 
     def __initKey(self):  # 初始化监听
         # 绑定全局事件
@@ -91,18 +91,18 @@ class ScreenshotSys():  # 系统截图模式
 
     def __checkClipboard(self):  # 检查剪贴板中是否已存在截图
         if self.checkTime >= self.checkTimeMax:
-            self.__close(False, '读取剪贴板失败')  # 检查次数超限，截图失败
+            self.__close(False, 'Failed to read clipboard')  # 检查次数超限，截图失败
             return
         clipData = Tool.getClipboardFormat()  # 读取剪贴板
-        if clipData == 2:  # 系统截图已保存到剪贴板内存，截图成功
-            Log.info(f'  第{self.checkTime}次检查成功')
+        if clipData == 2:  # The system screenshot has been saved to the clipboard memory, the screenshot is successful!
+            Log.info(f'  The first {self.checkTime} check')
             if Config.get('isShowImage'):  # 显示图片展示窗
                 ShowImage(imgPIL=ImageGrab.grabclipboard())
                 self.__close(False)
             else:
                 self.__close(True)
             return
-        Log.info(f'  第{self.checkTime}次检查')
+        Log.info(f'  The first {self.checkTime} check')
         self.checkTime += 1
         # 定时器指定下一轮查询
         Config.main.win.after(self.checkTimeRate, self.__checkClipboard)
@@ -176,17 +176,17 @@ class ScreenshotWin():  # 内置截图模式
             # 不一致，提示
             if not isEQ:
                 self.screenScaleList = scList
-                msg = f'''您当前使用{scInfosLen}块屏幕，且缩放比例不一致，分别为 {scList} 。
+                msg = f'''You are currently using {scInfosLen} blocks of screens with inconsistent scaling, respectively {scList} 。
 
-可能导致Umi-OCR截图异常，如画面不完整、窗口变形、识别不出文字等。
-若出现这种情况，
-请在系统设置【更改文本、应用等项目的大小】将所有屏幕调到相同数值。
-或者，请在软件设置里将截图模式切换到【Windows 系统截图】。\n'''
+It may result in abnormal Umi-OCR screenshots, such as incomplete screen, distorted window, no text recognised, and so on.
+If this happens.
+Please adjust all screens to the same value in the system settings [Change the size of text, application and other items].
+Or, please switch the screenshot mode to [Windows System Screenshot] in the software settings. \n'''
                 Config.main.panelOutput(msg)
                 Config.main.notebook.select(
                     Config.main.notebookTab[1])  # 转到输出卡
-                if tk.messagebox.askyesno('提示',
-                                          f'{msg}\n本次使用不再提示此消息请点击[是]，永久不再提示请点击[否]'):
+                if tk.messagebox.askyesno('draw attention to sth.',
+                                          f'{msg}\nClick [Yes] if you will not be prompted again for this use, or [No] if you will not be prompted permanently.'):
                     self.promptSss = False
                 else:
                     Config.set('promptScreenshotScale', False, isSave=True)
@@ -280,7 +280,7 @@ class ScreenshotWin():  # 内置截图模式
         self.canvas.bind('<ButtonRelease-1>', self.__onUp)  # 左键松开
         self.canvas.bind('<Motion>', self.__onMotion)  # 鼠标移动
         self.canvas.bind('<Enter>', self.__onMotion)  # 鼠标进入，用于初始化瞄准线
-        Log.info('Umi截图启动')
+        Log.info('Umi Screenshot Launch')
 
     def __hideElement(self, ele, size=4):  # 隐藏一个画布元素
         # 实际上是挪到画布外
@@ -335,7 +335,7 @@ class ScreenshotWin():  # 内置截图模式
         Hotkey.setMousePos(pos)
 
     def __repaint(self, event):  # 重绘
-        Log.info('重绘')
+        Log.info('repaint')
         if self.drawMode == _DrawMode.drag:  # 已在拖拽中
             self.drawMode = _DrawMode.ready  # 退出拖拽模式
             self.sightBoxXY = [self.OB, self.OB, self.OB, self.OB]
@@ -435,11 +435,11 @@ class ScreenshotWin():  # 内置截图模式
                 self.debugList.append(e)
                 e = self.canvas.create_text(p1x+15, p1y+15,
                                             font=('', 15, 'bold'), fill=color, anchor='nw',
-                                            text=f'屏幕{index+1}: {box} | {box[2]-box[0]},{box[3]-box[1]}')
+                                            text=f'screen{index+1}: {box} | {box[2]-box[0]},{box[3]-box[1]}')
                 self.debugList.append(e)
                 e = self.canvas.create_text(p1x+15, p1y+43,
                                             font=('', 10, ''), fill=color, anchor='nw',
-                                            text=f'按 Ctrl+Shift+Alt+D 退出调试模式')
+                                            text=f'Press Ctrl+Shift+Alt+D to exit debug mode')
                 self.debugList.append(e)
             self.canvas.lift(self.debugXYBox)  # 移动到最上方
             self.canvas.lift(self.debugXYText)  # 移动到最上方
@@ -464,13 +464,13 @@ class ScreenshotWin():  # 内置截图模式
                 EmptyClipboard()  # 清空剪贴板
                 SetClipboardData(CF_DIB, imgData)  # 写入
             except Exception as err:
-                self.errMsg = f'位图无法写入剪贴板，请检测是否有其他程序正在占用。\n{err}'
+                self.errMsg = f'The bitmap cannot be written to the clipboard, please detect if another programme is occupying it. \n{err}'
                 return False
             finally:
                 try:
                     CloseClipboard()  # 关闭
                 except Exception as err:
-                    self.errMsg = f'无法关闭剪贴板。\n{err}'
+                    self.errMsg = f'Unable to close clipboard. \n{err}'
                     return False
             return True
 

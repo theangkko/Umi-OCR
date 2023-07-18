@@ -1,16 +1,16 @@
-# 资源或比较长的字符串
+# Resources or longer strings
 
 import os
 import base64
 import tkinter as tk
 
-# 所有资源的最终目录
+# Final catalogue of all resources
 _dirList = [
     'asset/icon'
 ]
-# 图标资源
+# Icon Resources
 _ImageDict = {
-    'umiocr64': {  # 完整主图标 64像素 长方形
+    'umiocr64': {  # Full main icon 64 pixels rectangle
         'path': 'asset/icon/umiocr64.png',
         'isTK': True,
         'isSave': False,
@@ -64,7 +64,7 @@ _ImageDict = {
         'isSave': False,
         'base64': r'iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFyGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNi4wLWMwMDMgNzkuMTY0NTI3LCAyMDIwLzEwLzE1LTE3OjQ4OjMyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIzLTA0LTIyVDA5OjUwOjE3KzA4OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMy0wNC0yMlQxMDoxNzo0MyswODowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyMy0wNC0yMlQxMDoxNzo0MyswODowMCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MmQyMjdhMWEtMzNhZS0xODQ3LWE4NWItYTMwNTg0NWYwMjRiIiB4bXBNTTpEb2N1bWVudElEPSJhZG9iZTpkb2NpZDpwaG90b3Nob3A6ZTlmMzQ0N2EtYjRjMS1hNDQ0LTgwZDUtMmNhMDcyYmExZWY3IiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6NWI5NDBjMTgtZDNkYi1iZTQ3LWI0Y2UtYzU5NmVhOGE3N2M1Ij4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDo1Yjk0MGMxOC1kM2RiLWJlNDctYjRjZS1jNTk2ZWE4YTc3YzUiIHN0RXZ0OndoZW49IjIwMjMtMDQtMjJUMDk6NTA6MTcrMDg6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMi4xIChXaW5kb3dzKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6MmQyMjdhMWEtMzNhZS0xODQ3LWE4NWItYTMwNTg0NWYwMjRiIiBzdEV2dDp3aGVuPSIyMDIzLTA0LTIyVDEwOjE3OjQzKzA4OjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjIuMSAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+XnXObQAAAcVJREFUaN7t2r9qg0AABvBA50CHhq5CVwPSwaEuTgWHghSEZhM6BIRAiC9wD5A1L5DBwQdw9REyBR8jkBdI7wqGQ877kzb4XcjBt1xOvJ9e9I5zdDqdRjZndDOATnmheaP5okkHzgfNK80D30EZ4JOGAOab5lEFeAftPJ+nPsCUbziZTEiWZWTo4vu+6E4IAUnbyPM80jQNofUQqeu6i3gWAVZtgzzPYTrfJkkSHuCJAOcGTNweyAo7eLFYaF+tawBY4foYagOiKDrXM4jsJGma/raL4xgHwK48/5sMwbeDAQjGXy8CFqCLgAboIOABKoQVABnCGkAfwiqACGEdQIaAAux2OxKGoTTQAMdxjOftUIB2jqObIAjw/gOsTjdQs1GU3AH/tTS8dAgOCjgej8ZPscPhgAPonFwrm80GGyB7Ka7Xa6wh1HcHVGtsSEAXo4uAAlyCgAKIhpUKAQcwRUACTBCwAF0ENEAHMSigKIreN6wMsd1ucSZzy+VS+IaVIaAAprPWqqqMh9BKNU6HzGw2U25wJNdc0/4l+/2ejMdj5RbTtPsUKMvSaC18jcznc+K6rtYmn/XbrDex0W3vpwb3r1UGyg+Pf4rB9XHtOgAAAABJRU5ErkJggg=='
     },
-    'lockAlpha48': {  # 锁定，半透明
+    'lockAlpha48': {  # Locked, Translucent
         'path': 'asset/icon/zoomArrow48.png',
         'isTK': True,
         'isSave': False,
@@ -100,7 +100,7 @@ _ImageDict = {
         'isSave': True,
         'base64': r'AAABAAEAGBgAAAEAIACICQAAFgAAACgAAAAYAAAAMAAAAAEAIAAAAAAAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKysrKiwsLLgsLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/y0tLcgqKio3AAAAAAAAAAAAAAAAAAAAAAAAAAAqKio3LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/KysrKgAAAAAAAAAAAAAAAAAAAAAtLS3ILCws/ywsLEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtLS1rLS0tawAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwsLEAsLCz/LCwsuAAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCydLCwstSwsLIAsLCz/LCws/ywsLIAsLCy1LS0tpgAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAsLCz/LCws/wAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/ywsLP8tLS3IKioqNwAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAsLCz/LCws/wAAAAAsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/ywsLP8sLCz/LCws/ysrKyosLCz/LCws/wAAAAAAAAAAAAAAADMzMw8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/zMzMw8AAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAsLCxALCws/ywsLLgsLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAsLCydLCwstSwsLIAsLCz/LCws/ywsLH8sLCy1LS0tpgAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAALCws/ywsLP8sLCz/LCws/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADMzMw8sLCz/LCws/zMzMw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsLCz/LCws/wAAAAAAAAAALCws/ywsLP8tLS3ILCws/ywsLEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtLS1rLS0tawAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwsLEAsLCz/LCwsuAAAAAAAAAAALCws/ywsLP8qKio3LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/KysrKgAAAAAAAAAALCws/ywsLP8AAAAAKysrKiwsLLgsLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/y0tLcgqKio3AAAAAAAAAAAAAAAALCws/ywsLP8AAAAAAAAAAAAAAAAAAAAALCws/ywsLP8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALCws/ywsLP8AAAAAAAAAAAAAAAAAAAAALS0tyCwsLP8sLCxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsLCxALCws/ywsLLgAAAAAAAAAAAAAAAAAAAAAKioqNywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ysrKyoAAAAAAAAAAAAAAAAAAAAAAAAAACsrKyosLCy4LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8sLCz/LCws/ywsLP8tLS3IKioqNwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wCAAB8AAAAPAB+fjwA/n88APAPPADwDzwA8k8EAPJPAADgByAA8A8wAPw/MAB+fjAAAAAwAgAAcAPP//ADx//gA8AAAAPgAAQD///8A////AP///wA='
     },
-    'exit24ico': {  # 24像素 ico格式
+    'exit24ico': {  # 24 pixels ico format
         'path': 'asset/icon/exit24.ico',
         'isTK': False,
         'isSave': True,
@@ -115,8 +115,8 @@ _ImageDict = {
 
 class ASSET():
     def initRelease(self):
-        '''释放资源到本地'''
-        for dir in _dirList:  # 创建目录
+        '''Release resources locally'''
+        for dir in _dirList:  # Create a catalogue
             if not os.path.isdir(dir):
                 os.makedirs(dir)
         for im in _ImageDict.values():  # base64保存图片到本地
@@ -131,11 +131,11 @@ class ASSET():
             # im['tk'] = tk.PhotoImage(file=im['path'])
 
     def getImgTK(self, name):
-        '''获取名为name的tk图片'''
+        '''Get tk image named name'''
         return _ImageDict[name]['tk']
 
     def getPath(self, name):
-        '''获取一个项目的路径'''
+        '''Getting the path to a project'''
         return _ImageDict[name]['path']
 
 
@@ -144,39 +144,39 @@ Asset = ASSET()
 
 def GetTbpuHelp(website):
     return f"""
-【合并段落】说明
+[Merged paragraph] Explanation
 
-OCR文字识别是按行划分文字块，有时还会将一行误划分为多块。【合并段落】用于将同一行或同一段落内的文字重新合并到一起，避免输出多余的换行。
-
-
-【优化单行】
-将误划分为多块的同一行文字合并到一行。
-
-【合并多行-汉文自然段】
-适用于中、日、韩文等汉字段落。将多个左对齐的行视为同一段落，且第一行可以比后续行多空出开头两个字符。
-
-【合并多行-西文自然段】
-适用于英、德、法文等字母段落。在合并自然段的基础上，补充换行的空格。
-
-【合并多行-左对齐】
-将多个左对齐的行视为同一段落，合并文字。
-
-【合并多行-模糊匹配】
-只要垂直投影有重叠，且行高一致的行，视为同一段落。
-
-【竖排-从左到右-单行】
-【竖排-从右至左-单行】
-优化竖排识别，合并同一行文字，按从左到右或从右到左的顺序输出每一行。
-注意，必须搭配支持竖排识别的模型库（识别语言）一起使用。
-
-【不做处理】
-将OCR结果原样输出。
+OCR text recognition is divided into text blocks by line, and sometimes a line is mistakenly divided into multiple blocks. Merge Paragraphs] is used to re-combine text within the same line or paragraph to avoid outputting redundant line breaks.
 
 
-可以在忽略区域编辑器内预览合并段落的效果，对比使用不同方案时文字虚线框的变化。
-但实际任务时忽略区域早于合并段落执行，不受合并段落的影响。
+[Optimise single line]
+Merge the same line of text that was mistakenly divided into multiple chunks into a single line.
+
+[Merge Multiple Lines - Natural Paragraph in Chinese]
+Applies to Chinese, Japanese, Korean and other Chinese character paragraphs. Multiple left-aligned lines are treated as the same paragraph, and the first line can have two more characters than the following lines.
+
+[Merge Multiple Lines - Natural Paragraph in Western Languages
+Applies to English, German, French, and other alphabetic paragraphs. The space for line breaks is added on top of the merged natural paragraph.
+
+[Merge Multiple Lines-Left Alignment
+Considers multiple left-aligned lines as the same paragraph and merges the text.
+
+[Merge Multiple Lines - Fuzzy Match]
+Consider lines with overlapping vertical projections and the same line height as the same paragraph.
+
+[Vertical - Left to Right - Single Line]
+[Vertical Row-Right to Left-Single Row].
+Optimise vertical recognition by merging the same line of text and outputting each line in left-to-right or right-to-left order.
+Note that it must be used with a model library (recognition language) that supports vertical row recognition.
+
+[No processing].
+Outputs the OCR results as is.
 
 
-更多说明详见GitHub项目主页：
+You can preview the effect of merging paragraphs within the Ignore Area Editor to compare the changes in the text dotted box when using different schemes.
+However, the actual task of ignoring regions is executed earlier than merging paragraphs and is not affected by merging paragraphs.
+
+
+See the GitHub project page for more details:
 {website}
 """

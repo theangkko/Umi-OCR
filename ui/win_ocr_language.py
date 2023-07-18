@@ -24,7 +24,7 @@ class OcrLanguageWin:
         self.win.minsize(250, 340)  # 最小大小
         self.win.geometry(f'{250}x{340}')
         self.win.unbind('<MouseWheel>')
-        self.win.title('更改语言')
+        self.win.title('Change Language')
         self.win.wm_protocol(  # 注册窗口关闭事件
             'WM_DELETE_WINDOW', self.exit)
         fmain = tk.Frame(self.win, padx=4, pady=4)
@@ -39,14 +39,14 @@ class OcrLanguageWin:
         wid = tk.Label(ftop, text='提示', fg='deeppink', cursor='question_arrow')
         wid.pack(side='right')
         Config.main.balloon.bind(
-            wid, '''窗口操作：
-1. 正常时，切换语言立即生效
-2. 若在任务进行中切换语言，将在下次任务时生效
-3. 主窗口启用/取消置顶后，需重新打开本窗口，才能使本窗口设为相应的置顶状态
+            wid, '''Window Operation:
+1. When normal, switching language takes effect immediately
+2. If you switch language during the task, it will take effect in the next task.
+3. After enabling/cancelling the topping of the main window, you need to re-open this window to make this window set to the corresponding topping status.
 
-更多语言：
-本软件有整理好的多国语言扩展包，可导入更多语言模型库。也可以
-手动导入PaddleOCR兼容的模型库，详情请浏览项目Github主页。''')
+More languages:
+This software has organised multi-language expansion packs, you can import more language model libraries. You can also
+manually import PaddleOCR-compatible model libraries, please visit the project's Github page for details.''')
 
         # 中部控制
         fmiddle = tk.Frame(fmain, pady=4)
